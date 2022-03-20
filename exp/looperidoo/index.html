@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="utf-8">
+	<title>LOOPERIDOO</title>
+	<style type="text/css">
+		body,
+		html {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+			position: fixed;
+			margin: 0;
+		}
+
+		#can {
+			background: #ccc;
+		}
+	</style>
+</head>
+
+<body>
+	<canvas id="can"></canvas>
+	<script>
+		var can = document.getElementById("can");
+		var c = can.getContext("2d");
+		resize();
+		window.addEventListener("resize", resize);
+		var frames = [];
+		var f = 0;
+		var oldtime = null;
+		var drawing = false;
+		var color = 0;
+
+		var fps = 40;
+		var N = 15;
+		var scale = 10;
+		var BS = 25 / scale;
+		var dcolor = Math.floor(255 / N);
+
+		function resize(ev) {
+			can.width = window.innerWidth;
+			can.height = window.innerHeight;
+			init();
+		}
+
+		function init() {
+			oldtime = null;
+			frames = [];
+			for (var i = 0; i < N; i++) {
+				var frame = document.createElement("canvas");
+				frame.width = Math.floor(can.width / scale);
+				frame.height = Math.floor(can.height / scale);
+				var ctx = frame.getContext("2d");
+				ctx.fillStyle = "#fff";
+				ctx.fillRect(0, 0, frame.width, frame.height);
+				ctx.fillStyle = "#000";
+				frames.push({ canvas: frame, ctx: ctx });
+			}
+
+			can.addEventListener("mousedown", mousedown);
+			can.addEventListener("mouseup", mouseup);
+			can.addEventListener("mousemove", mousemove);
+
+			can.addEventListener("touchstart", mousedown, false);
+			can.addEventListener("touchend", mouseup, false);
+			can.addEventListener("touchcancel", mouseup, false);
+			can.addEventListener("touchmove", mousemove, false);
+		}
+
+		function pset(rx, ry, col) {
+			var x = Math.floor(rx / scale);
+			var y = Math.floor(ry / scale);
+			frames[f].ctx.fillStyle = `rgba(${col}, ${col}, ${col}, 1)`;
+			frames[f].ctx.fillRect(x - BS / 2, y - BS / 2, BS, BS);
+		}
+
+		var numtouches = 0;
+
+		function mousedown(ev) {
+			ev.preventDefault();
+			color = 255;
+			//init();
+			//BS = Math.floor(2 + Math.random() * 5);
+			var touches = ev.changedTouches;
+			if (touches) {
+				for (var i = 0; i < touches.length; i++) {
+					pset(touches[i].pageX, touches[i].pageY, color)
+					numtouches++;
+				}
+			}
+			else {
+				pset(ev.clientX, ev.clientY, color)
+			}
+
+			drawing = true;
+			color -= dcolor;
+		}
+
+		function mousemove(ev) {
+			ev.preventDefault();
+			if (!drawing) { return; }
+			var touches = ev.changedTouches;
+			if (touches) {
+				for (var i = 0; i < touches.length; i++) {
+					pset(touches[i].pageX, touches[i].pageY, color)
+				}
+			}
+			else {
+				var x = Math.floor(ev.clientX / scale);
+				var y = Math.floor(ev.clientY / scale);
+				frames[f].ctx.fillStyle = `rgba(${color}, ${color}, ${color}, 1)`;
+				frames[f].ctx.fillRect(x - BS / 2, y - BS / 2, BS, BS);
+			}
+			color -= dcolor;
+		}
+
+		function mouseup(ev) {
+			ev.preventDefault();
+			var touches = ev.changedTouches;
+			if (touches) {
+				for (var i = 0; i < touches.length; i++) {
+					numtouches--;
+				}
+			}
+			if (touches && numtouches == 0 || !touches) {
+				drawing = false;
+			}
+		}
+
+
+		function draw() {
+			requestAnimationFrame(draw);
+			var t = performance.now();
+			if (!frames.length) return;
+			if (oldtime === null) oldtime = t;
+			if (t - oldtime >= 1000 / fps) {
+				f = (f + 1) % frames.length;
+				can.width = can.width;
+				c.drawImage(frames[f].canvas, 0, 0, can.width, can.height);
+				oldtime = t;
+			}
+
+		}
+		init();
+		draw();
+	</script>
+
+
+	<script>
+		var _gaq = [["_setAccount", "UA-5753152-1"], ["_trackPageview"]];
+		(function (d, t) {
+			var g = d.createElement(t),
+				s = d.getElementsByTagName(t)[0];
+			g.src = "//www.google-analytics.com/ga.js";
+			s.parentNode.insertBefore(g, s);
+		}(document, "script"));
+	</script>
+
+</body>
+
+</html>

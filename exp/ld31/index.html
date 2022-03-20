@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+
+	<meta property="og:title" content="ORION" />
+	<meta property="og:site_name" content="Feiss" />
+	<meta property="og:type" content="article" />
+	<meta property="og:image" content="http://feiss.be/ld31/thumb.jpg" />
+	<meta property="og:url" content="http://feiss.be/ld31/" />
+	<meta property="og:description" content="A retro spacecraft launch simulator prototype done in 2 days" />
+
+	<meta name="twitter:card" content="summary" />
+	<meta name="twitter:title" content="ORION" />
+	<meta name="twitter:description" content="A retro spacecraft launch simulator prototype done in 2 days" />
+	<meta name="twitter:image" content="http://feiss.be/ld31/thumb.jpg" />
+
+
+
+	<title>ORION - A game made in 48h - LD 31</title>
+
+	<script src="canvasquery.js"></script>
+	<script src="playground.js"></script>
+	<script src="ld31.js"></script>
+
+	<!-- by Diego F. Goberna for Ludum Dare 31 
+       go to http://feiss.be/games -->
+
+
+	<style>
+		body,
+		html {
+			background: #111;
+			font: 12px Helvetica, Verdana, Arial, sans-serif;
+			color: #356;
+			margin: 0;
+			-webkit-user-select: none;
+		}
+
+		#cont {
+			width: 960px;
+			height: 600px;
+			background: #611;
+			margin: 20px auto;
+			-webkit-user-select: none;
+		}
+
+		#about,
+		.block {
+			width: 960px;
+			margin: 0px auto;
+			margin-bottom: 1em;
+			text-align: right;
+			-webkit-user-select: none;
+		}
+
+		a {
+			text-decoration: none;
+			border-bottom: 1px dotted #467;
+			color: #467;
+		}
+
+		a:hover {
+			color: #689;
+		}
+	</style>
+
+
+
+</head>
+
+<body>
+	<div id="fb-root"></div>
+	<script>(function (d, s, id) {
+			var js, fjs = d.getElementsByTagName(s)[0];
+			if (d.getElementById(id)) return;
+			js = d.createElement(s); js.id = id;
+			js.src = "//connect.facebook.net/es_ES/sdk.js#xfbml=1&version=v2.0";
+			fjs.parentNode.insertBefore(js, fjs);
+		}(document, "script", "facebook-jssdk"));</script>
+
+
+	<div id="cont"></div>
+	<div id="about"><strong>ORION</strong> is a game made in 48 hours for <a href="http://ludumdare.com">LD 31</a> by <a
+			href="http://feiss.be">Diego F. Goberna</a>. Vote for it <a
+			href="http://ludumdare.com/compo/ludum-dare-31/?action=preview&uid=8733">here</a>.</div>
+
+	<div class="block">
+		<div class="fb-like" data-href="https://feiss.be/ld31" data-layout="button_count" data-action="like"
+			data-show-faces="false" data-share="false"></div>
+		<a href="https://twitter.com/share" class="twitter-share-button"
+			data-text="ORION - A spacecraft simulator prototype done in 2 days for Ludum Dare"
+			data-via="feiss">Tweet</a>
+		<script>!function (d, s, id) { var js, fjs = d.getElementsByTagName(s)[0], p = /^http:/.test(d.location) ? "http" : "https"; if (!d.getElementById(id)) { js = d.createElement(s); js.id = id; js.src = p + "://platform.twitter.com/widgets.js"; fjs.parentNode.insertBefore(js, fjs); } }(document, "script", "twitter-wjs");</script>
+	</div>
+
+	<script>start("cont"); </script>
+
+	<script>
+		var _gaq = [["_setAccount", "UA-5753152-1"], ["_trackPageview"]];
+		(function (d, t) {
+			var g = d.createElement(t),
+				s = d.getElementsByTagName(t)[0];
+			g.src = "//www.google-analytics.com/ga.js";
+			s.parentNode.insertBefore(g, s);
+		}(document, "script"));
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,114 @@
+<div style="width:100%;float:left;overflow:hidden">
+	<?php 
+ 	echo "<div class="post" style="margin-top:0px;">";
+ 	echo "<div>".parse_human_date($post)."</div>";
+ 	//echo "<a href="/blog" style="float:right">close comments</a>";
+	echo "<a name="comments"></a><br><div class="posttitle">Comments</div>"; 
+	foreach ($comments as $key => $comment) {
+		$c= explode("\n", $comment);
+		echo "<div><blockquote class="comment">".trim($c[4])."</blockquote><div title="".std_date($c[0]).""><strong>".trim($c[1])."</strong>, ".human_date($c[0])."</div></div>";
+	}
+?>
+
+	<form action="/blog/post/<?php echo $postid ?>#ping" method="POST" onsubmit="return checkform(this)">
+		<a href="javascript:;" onclick="share(" f","http://feiss.be/blog/post/<?php echo $postid ?>")"
+			class="fb"></a>&nbsp;<a href="javascript:;" title="Share on Google+" onclick="share("
+			g","http://feiss.be/blog/post/<?php echo $postid ?>")" class="gp"></a>&nbsp;<a href="javascript:;"
+			onclick="share(" t","http://feiss.be/blog/post/<?php echo $postid ?>")" class="twt"></a>
+		<input type="hidden" name="action" value="comment">
+		<input type="hidden" name="as1" value="<?php echo $captchaid;?>">
+		<textarea name="text" placeholder="Write here your comment..." style="height:40px"></textarea><br />
+		<div class="formextra" style="display:none">
+			<input name="author" placeholder="Your name">
+			&nbsp;
+			<input name="contact" style="width:290px;float:right" placeholder="Your website or e-mail (optional)">
+			<br>
+			<br>Write down: &nbsp;&nbsp;<strong>
+				<?php echo $captcha; ?>
+			</strong>&nbsp;&nbsp;<input name="as2" style="width:6em" placeholder="<?php echo strtolower($captcha); ?>">
+			<input type="submit" value="  Send comment  " style="float:right" />
+			<a name="ping"></a>
+			<div class="comments_error">
+				<?php if ($error) echo $error; ?>
+			</div>
+		</div>
+	</form>
+	<p>&nbsp;</p>
+	<p>&nbsp;</p>
+	<p><a href="/blog" class="moreinfo">&larr; Return to blog</a></p>
+</div>
+</div>
+<div class="sidebar">
+	<?php echo $sidebar;?>
+</div>
+
+<script src="res/jquery.js"></script>
+<script>
+	jQuery(function () {
+		jQuery.support.placeholder = false;
+		var test = document.createElement("input");
+		if ("placeholder" in test) jQuery.support.placeholder = true;
+	});
+
+	$(document).ready(function () {
+		$("textarea").bind("click focus", function () { $(".formextra").slideDown(); $(this).animate({ height: "100px" }) });
+		$("textarea").blur(function () { if ($.trim($(this).val()) == "") { $(".formextra").slideUp(); $(this).animate({ height: "40px" }) } });
+
+		if (!$.support.placeholder) {
+			$("input:text, textarea").each(function () {
+				$(this).css({ float: "left" }).addClass("ieinput");
+				$(this).before("<div><br>" + $(this).prop("placeholder") + "</div>")
+			});
+		}
+
+	});
+	$("input,textarea").focus(function () { $(".comments_error").empty(); });
+	function checkform(dom) {
+		var msg = "";
+		if ($.trim(dom.as2.value).toLowerCase() != dom.as2.placeholder) msg = "Please, repeat the captcha.";
+		if ($.trim(dom.author.value) == "") msg = "You didn"t write your name.";
+		if ($.trim(dom.text.value) == "") msg = "You didn"t write any comment.";
+		$(".comments_error").text(msg);
+		return msg == "";
+	}
+
+</script>
+
+<?php
+
+function parse_human_date($str)
+{
+	$pos1= stripos($str, "time="");
+	if ($pos1===false) return $str;
+	$pos1+= strlen("time="");
+	$pos2= stripos($str, """, $pos1)+1;
+	if ($pos2===false) return $str;
+	$ts= substr($str, $pos1, $pos2-$pos1-1);
+	if (!is_numeric($ts)) return $str;
+	$ts= intval($ts);
+	$ret= substr($str, 0, $pos2);
+	$ret.= " title="".std_date($ts)."">".human_date($ts).substr($str, $pos2+1);
+	return $ret;
+}
+
+function human_date($timestamp)
+{
+	$diff= time()-intval($timestamp);
+	
+	if ($diff < 60) $val=$diff." sec";// return "$diff secs ago ($date)";
+	else if ($diff < 3600) $val= intval($diff/60)." min";//." mins ago ($date)";
+	else if ($diff < 3600*24) $val= intval($diff/3600)." hour";//." hours ago ($date)";
+	else if ($diff < 3600*24*30.5) $val= intval($diff/(3600*24))." day";//." days ago ($date)";
+	else if ($diff < 3600*24*30.5*12) $val= intval($diff/(3600*24*30.5))." month";//." months ago ($date)";
+	else $val= intval($diff/(3600*24*30.5*12))." year";//" years ago ($date)";
+	
+	if ($val[1]==" " && ($val[0]=="0" || $val[0]=="1")) return $val." ago";
+	return $val."s ago";
+}
+
+function std_date($timestamp)
+{
+	return @date("d M Y, \a\t H:i", intval($timestamp));
+}
+
+?>

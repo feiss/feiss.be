@@ -1,0 +1,50 @@
+</div><!-- content -->
+<div class="clear">&nbsp;</div>
+<a class="top hidden" href="javascript:;" title="Back to top"></a>
+<div class="footer">All content is Copyright *year* Diego Fernandez Goberna, unless otherwise stated.</div>
+</div>
+<!-- javascripts -->
+<script type="text/javascript">
+  //$("img.lazy").lazyload({ threshold : 1000, load:function(){lazycallback(this)} });
+  // $(document).ready( function()
+  // {
+  // 	$.waypoints.settings.scrollThrottle = 30;
+  // 	$("#content").waypoint(function(event, direction) {
+  // 		$(".top").toggleClass("hidden", direction === "up");
+  // 	}, { offset:"-50%" });
+
+  //   $("a.top").click(function(){ $("html, body").animate({ scrollTop: 0 }, 600); });
+  //   $(".project").first().addClass("first");
+  //   saveGMT();
+  // });
+  // function saveGMT() {
+  //       var tz= ((new Date()).getTimezoneOffset()/-60);
+  //       var date = new Date();
+  //       date.setTime(date.getTime()+(365*24*60*60*1000));
+  //       var expires = "; expires="+date.toGMTString();
+  //       document.cookie = "clientGMT="+tz+expires+"; path=/";
+  //     }
+  function share(where, url) {
+    var w; switch (where) {
+      case "f": w = window.open("", "sharewin", "height=200,width=500,status=0,location=0,resizable=0,toolbar=0,directories=0,menubar=0,scrollbars=0"); w.document.write("<div style="margin: 30px 100px"><iframe style="border: none" src="http://www.facebook.com/plugins/like.php?href=" + url + "&send=false&layout=standard&width=400&show_faces=true&action=like&colorscheme=light&font=verdana&height=90"></iframe></div>"); break;
+      case "t": w = window.open("https://twitter.com/share?url=" + url, "sharewin", "height=400,width=500,status=0,location=0,resizable=0,toolbar=0,directories=0,menubar=0,scrollbars=0"); break;
+      case "g": w = window.open("", "sharewin", "height=400,width=600,status=0,location=0,resizable=0,toolbar=0,directories=0,menubar=0,scrollbars=0"); var data = "<html><head><script src="https://apis.google.com/js/plusone.js">{lang: "en-GB"}</"; data += "script></head><body style="margin:20px 60px"><div class="g-plus" data-action="share" data-annotation="inline" data-height"24" data-href="" + url + ""></div></body></html>"; w.document.write(data); w.document.write(data); break;
+    }w.moveTo(500, 400);
+  }
+</script>
+<!-- google analytics -->
+<!--  
+<script>
+  var _gaq = [["_setAccount", "UA-5753152-1"], ["_trackPageview"]];
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = "//www.google-analytics.com/ga.js";
+    s.parentNode.insertBefore(g, s);
+  }(document, "script"));
+</script> -->
+
+<!-- google analytics -->
+</body>
+
+</html>

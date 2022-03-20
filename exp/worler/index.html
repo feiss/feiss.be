@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Worler</title>
+    <style>
+        body {
+            background-color: #111;
+            color: #ccc;
+            font-family: sans-serif;
+            margin: 1rem;
+        }
+
+        button {
+            padding: 0.3rem 0.6rem;
+            background-color: #555;
+            border: 1px solid #000;
+            font-weight: bold;
+            width: 2rem;
+        }
+
+        button:hover {
+            background-color: #aaa;
+        }
+
+        button.selected {
+            background-color: aquamarine;
+        }
+
+        h1,
+        h5,
+        a {
+            font-weight: normal;
+            color: #ccc;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Worler</h1>
+    <p id="letras"></p>
+
+    <p id="quiz">
+        <button onclick="add_letter(this)">_</button>
+        <button onclick="add_letter(this)">_</button>
+        <button onclick="add_letter(this)">_</button>
+        <button onclick="add_letter(this)">_</button>
+        <button onclick="add_letter(this)">_</button>
+    </p>
+    <a href="#" onclick="add_candidate()">add candidate</a>
+    <p id="candidates"></p>
+    <a href="#" onclick="add_impossible()">add impossible</a>
+    <p id="impossibles"></p>
+    <h5>///</h5>
+    <p id="output"></p>
+    <script>
+        const DB = ["abajo", "abate", "abeja", "abeto", "abono", "abril", "abrir", "abuso", "acaba", "acabo", "acabo", "acaso", "acebo", "acera", "acero", "acoso", "actor", "actos", "acta", "acto", "acuse", "adios", "adobe", "aerea", "aereo", "aforo", "agria", "agrio", "agudo", "aguja", "ahogo", "ahora", "ajeno", "ajuar", "alado", "album", "aldea", "aleli", "alero", "aleta", "alfil", "aliar", "aloja", "alpha", "altar", "alzar", "amada", "amado", "ambos", "amena", "ameno", "amiga", "amigo", "ancha", "ancho", "ancla", "andar", "anden", "anexa", "anexo", "anime", "ansia", "antes", "anual", "añejo", "aorta", "apego", "apodo", "apoyo", "apuro", "aquel", "arado", "araña", "arcon", "arder", "ardor", "ardua", "arena", "argot", "armar", "armas", "aroma", "arpon", "arroz", "asado", "asilo", "asomo", "aspas", "astro", "atajo", "atad", "atlas", "atras", "atril", "atrio", "atroz", "audaz", "audio", "aulas", "aunar", "autor", "avaro", "avena", "aviar", "avion", "aviso", "axial", "axila", "ayuda", "ayuno", "azada", "aznar", "azote", "abaco", "acaro", "acido", "agata", "alamo", "album", "ambar", "anade", "angel", "anima", "animo", "anodo", "apice", "arabe", "arbol", "arido", "atico", "atomo", "avido", "avila", "babor", "baden", "bahia", "baila", "baile", "bajar", "balas", "balda", "balde", "balon", "balsa", "bamb", "banal", "banca", "banco", "banda", "bando", "banjo", "bañar", "barba", "barbo", "barca", "barco", "bario", "baron", "barra", "barro", "basal", "basar", "basto", "bateo", "batir", "bazar", "beata", "beato", "beber", "bedel", "beige", "belen", "belga", "bella", "bello", "bemol", "berza", "besar", "betn", "bicho", "bimbo", "bingo", "blues", "blusa", "boina", "bolas", "bolos", "bolsa", "bolso", "bomba", "bombo", "bongo",
+            "bonos", "borda", "borde", "bordo", "botar", "botas", "botin", "boton", "boxeo", "bozal", "boxer", "braga", "brasa", "brava", "bravo", "brazo", "breve", "brida", "brisa", "broca", "broma", "bromo", "brote", "bruja", "brujo", "bruma", "bruto", "bucal", "buceo", "bucle", "buena", "bueno", "bujia", "bulbo", "bulla", "bulto", "buque", "burda", "burla", "burra", "burro", "busca", "busto", "buzon", "cabal", "caber", "cable", "cabra", "cacao", "cache", "cacho", "caere", "caigo", "caida", "cajas", "cajon", "caldo", "calla", "calle", "callo", "calma", "calmo", "calor", "calva", "calvo", "campa", "campo", "canal", "canje", "canoa", "canon", "cansa", "canta", "cante", "canto", "cañon", "caoba", "capaz", "capon", "caqui", "cardo", "carga", "cargo", "cariz", "carne", "carne", "carpa", "carro", "carta", "casar", "casas", "casco", "casos", "caspa", "casta", "casto", "catre", "cauce", "causa", "cauto", "cavar", "cazar", "cazon", "cadiz", "caliz", "cebra", "ceder", "cedro", "cejas", "celda", "celos", "cenar", "cenit", "censo", "ceñir", "cerca", "cerco", "cerda", "cerdo", "cerro", "cesar", "cesio", "cesta", "cesto", "cetro", "cesar", "chale", "chapa", "chata", "checa", "checo", "chelo", "chepa", "chica", "chico", "chile", "china", "chino", "chita", "chivo", "choca", "chopo", "choza", "chulo", "chupa", "ciclo", "ciega", "ciego", "cielo", "cieno", "cifra", "cinco", "cinta", "cinto", "circo", "cisma", "cisne", "citar", "civil", "clara", "claro", "clase", "clave", "clavo", "clero", "clima", "cloro", "cobra", "cobre", "cobro", "cocer", "coche", "cofre", "coger", "coito", "cojin", "colar", "colmo", "colon", "color", "colon", "comas", "comba", "comer", "comn", "conde", "coñac", "copas", "copia", "copla", "coral", "coran", "corno", "corse", "corso", "corta", "corte", "corto", "corva", "corzo", "cosas", "coser", "costa", "coste", "costo", "comic", "crack", "crear", "crece", "credo", "creen", "creer", "crees", "creia", "crema", "crepe", "criar", "croar", "cromo", "cruce", "crudo", "cruel", "cuasi", "cubil", "cuero", "cueva", "cuida", "culpa", "culta", "culto", "cuota", "curar", "curas", "curia", "curry", "cursi", "curso", "curva", "curvo", "cutis", "daban", "dados", "dalia", "damas", "damos", "dance", "dando", "danes", "danza", "dañar", "dardo", "darle", "datar", "datos", "david", "datil", "deben", "deber", "debia", "debut", "decir", "decia", "dedal", "dedos", "dejan", "dejar", "delta", "demas", "denim", "densa", "derby", "desde", "deseo", "deuda", "debil", "diana", "dicen", "dices", "dicha", "dicho", "diego", "dieta", "digan", "digas", "digno", "dinar", "diosa", "dique", "diria", "disco", "divan", "doble", "docto", "dogma", "doler", "dolor", "domar", "donar", "donde", "dorso", "dosel", "dosis", "dotar", "docil", "dolar", "donde", "drama", "droga", "ducha", "dudar", "dudas", "duelo", "dueña", "dueño", "dueto", "dulce", "duque", "durar", "duros", "ebrio", "echar", "elena", "elije", "elijo", "elite", "ellas", "ellos", "email", "enana", "enano", "enero", "enojo", "entra", "entre", "envio", "equis", "erizo", "errar", "error", "espia", "espin", "esqui", "estan", "estar", "estas", "esten", "estio", "estos", "estoy", "etano", "etapa", "etnia", "euros", "exije", "exijo", "extra", "ebano", "ebola", "elite", "epica", "epico", "epoca", "estas", "ester", "estos", "etica", "exito", "exodo", "facha", "facto", "faena", "fagot", "falaz", "falda", "falla", "fallo", "falsa", "falso", "falta", "falto",
+            "fango", "fanta", "fardo", "farol", "farsa", "fatal", "fauna", "favor", "facil", "fecha", "feliz", "felpa", "feria", "feroz", "ferry", "feudo", "femur", "fibra", "ficha", "fiera", "fiero", "fijar", "filme", "filon", "final", "finca", "fines", "firma", "firme", "fisco", "flaca", "flaco", "flash", "flema", "flexo", "floja", "flojo", "flora", "flota", "flote", "fluir", "flujo", "flor", "fobia", "focal", "fogon", "folio", "fonda", "fondo", "foral", "forja", "forma", "forro", "fotos", "foton", "fosil", "frase", "freir", "freno", "fresa", "freud", "friso", "frita", "frito", "fruta", "fruto", "fuego", "fuera", "fuere", "fuero", "fuese", "fugaz", "fular", "fumar", "funda", "furia", "furor", "fusil", "fusta", "gaban", "gafas", "gaita", "galan", "gales", "galgo", "gallo", "gamba", "gamma", "ganar", "ganas", "ganso", "garbo", "garra", "garza", "gasta", "gasto", "gatos", "gemir", "genio", "gente", "gesta", "gesto", "girar", "globo", "gofio", "goles", "golfo", "golpe", "gorda", "gordo", "gorra", "gorro", "goteo", "gozar", "grada", "grado", "grafo", "grajo", "gramo", "grana", "grano", "grapa", "grasa", "grata", "grato", "grava", "grave", "grifo", "gripe", "grita", "grito", "grupo", "gruta", "guapa", "guapo", "gueto", "guiar", "guiño", "guion", "guiri", "guisa", "guiso", "gusta", "gusto", "gusto", "habas", "haber", "habia", "habla", "hablo", "habra", "habre", "hacen", "hacer", "haces", "hacha", "hacia", "hadas", "hagan", "haren", "haria", "harta", "harto", "hasta", "hayan", "habil", "heavy", "hebra", "hecha", "hecho", "hedor", "heidi", "helar", "helio", "hemos", "herir", "heroe", "hiato", "hielo", "hiena", "hijos", "hilar", "himno", "hind", "hogar", "hojas", "honda", "hondo", "hongo", "honor", "honra", "horas", "horca", "horda", "horno", "hotel", "house", "hucha", "hueca", "hueco", "hueso", "huevo", "huida", "huida", "hulla", "humor", "huron", "hurto", "icono", "ideal", "idear", "ideas", "igual", "ileso", "impar", "impio", "india", "indio", "ingle", "inter", "irani", "islam", "islas", "istmo", "idolo", "jabon", "jaleo", "jamas", "jamon", "japon", "jaque", "jarra", "jarro", "jaula", "jeans", "jeque", "jerez", "jerga", "jess", "joder", "jorge", "joven", "joyas", "judio", "juega", "juego", "jueza", "jugar", "julio", "junio", "junta", "junto", "jurar", "jurel", "justa", "justo", "karma", "kayak", "kilos", "koala", "kurdo", "labio", "labor", "lacra", "laico", "lamer", "lanar", "lance", "lanza", "lapso", "larga", "largo", "larva", "latir", "latin", "laton", "laudo", "laura", "lavar", "lapiz", "laser", "latex", "leche", "lecho", "leere", "legal", "legar", "legua", "leido", "lejos", "lenta", "lente", "lento", "leona", "lepra", "lerdo", "letal", "letra", "leyes", "libio", "libra", "libre", "libro", "liceo", "licor", "lidia", "ligar", "ligue", "limbo", "limon", "lince", "linda", "linde", "lindo", "linea", "lirio", "lista", "listo", "litio", "litro", "lider", "linea", "llaga", "llama", "llame", "llamo", "llamo", "llano", "llave", "llega", "llego", "llego", "llena", "lleno", "lleva", "llevo", "llevo", "lloro", "local", "locas", "locos", "logia", "logro", "luces", "lucha", "lucio", "lucir", "lucia", "lucro", "luego", "lugar", "luisa", "lunar", "lunes", "lupas", "lupus", "lycra", "macho", "madre", "maese", "mafia", "magia", "magma", "magna", "magos", "malas", "malla", "malos", "malta", "malva", "mamba", "mambo", "mamut", "manco", "manda", "mande", "mando", "manga", "mango", "mania", "manos", "manso", "manta", "manto", "mapas", "marca", "marco", "marea", "mareo", "maria", "marta", "marte", "marzo", "masas", "masia", "mason", "matar", "matiz", "mayar", "mayor", "mecer", "mecha", "media", "medio", "medir", "mejor", "mella", "melon", "menar", "menor", "menos", "menta", "mente", "mento", "merma", "meses",
+            "meson", "metal", "meter", "metro", "micra", "micro", "miedo", "milla", "millo", "minar", "miope", "mirar", "mirlo", "misil", "misma", "mismo", "mitad", "mitch", "mitin", "mixta", "mixto", "mocos", "modal", "molde", "moler", "momia", "monja", "monje", "monos", "monte", "monto", "moral", "morar", "morbo", "morir", "morro", "morsa", "morse", "mosca", "mosto", "motel", "motin", "motor", "mover", "modem", "movil", "mucha", "mucho", "mudar", "mueca", "muela", "muere", "muero", "mueve", "muevo", "mugir", "mugre", "mujer", "multa", "mundo", "muñon", "mural", "murio", "museo", "musgo", "muslo", "mutua", "mutuo", "nacer", "nacio", "nadar", "nadie", "naipe", "nalga", "nardo", "nariz", "nasal", "natal", "naval", "navio", "nacar", "necio", "negar", "negra", "negro", "nevar", "nicho", "nieta", "nieto", "nieve", "nilon", "ninfa", "ninja", "niñas", "niñez", "niños", "nipon", "niqui", "nivel", "noble", "nobuk", "noche", "nogal", "noria", "norma", "norte", "notar", "notas", "novel", "novia", "novio", "nubes", "nuera", "nueva", "nueve", "nuevo", "nunca", "nutre", "nutro", "oasis", "obesa", "obeso", "obrar", "obras", "obvio", "ocaso", "odiar", "oeste", "oiria", "ojala", "ojito", "oliva", "olivo", "omega", "omiso", "opaco", "opera", "opina", "optar", "orden", "oreja", "orgia", "orina", "oruga", "orujo", "oscar", "osito", "ostra", "otear", "otoño", "otras", "otros", "oveja", "ovino", "oxido", "ozono", "opalo", "opera", "ovalo", "ovulo", "oxido", "pablo", "pacer", "pacto", "padre", "pagan", "pagar", "pagos", "pajar", "palco", "palio", "palma", "palmo", "pampa", "panal", "panda", "panel", "panty", "panza", "papal", "papas", "papel", "parar", "parca", "pardo", "pared", "paren", "pareo", "parir", "paris", "paron", "parra", "parte", "parto", "pasan", "pasar", "paseo", "pasmo", "pasos", "pasta", "pasto", "patas", "patio", "patin", "patos", "pausa", "pauta", "pavia", "pavor", "peaje", "pecar", "peces", "pecho", "pedir", "pedro", "pegar", "peine", "pelar", "pelea", "pella", "pelos", "penal", "peñon", "peque", "peral", "perca", "perla", "perol", "perro", "persa", "pesar", "pesas", "pesca", "peste", "pezon", "piano", "picar", "pichi", "picor", "picon", "piden", "pieza", "pilar", "pilas", "pillo", "pinar", "pinta", "pinto", "pinza", "piojo", "pipas", "pique", "pisar", "pisco", "pisos", "pista", "piton", "pizca", "pizza", "pivot", "placa", "plaga", "plana", "plano", "plata", "plato", "plato", "playa", "plaza", "plazo", "plebe", "plena", "pleno", "plexo", "plomo", "pluma", "pobre", "pocas", "pocos", "poder", "podio", "podia", "podra", "podre", "poema", "poeta", "polar", "polca", "polen", "polio", "polla", "pollo", "polvo", "pompa", "ponen", "poner", "pones", "ponga", "pongo", "ponia", "porno", "porra", "porro", "porta", "porte", "posar", "posta", "poste", "potro", "prado", "presa", "preso", "prima", "primo", "prior", "prisa", "priva", "prole", "prosa", "pubis", "pudor", "pueda", "puede", "puedo", "pugna", "pulga", "pulpa", "pulpo", "pulso", "punky", "punta", "punto", "puñal", "puras", "purga", "puzle", "queda", "quede", "quedo", "quedo", "queja", "quema", "queso", "quien", "quien", "quita", "quite", "quito", "quiza", "rabia", "racha", "radar", "radio", "rally", "ramal", "rampa", "rango", "rapaz", "rapto", "rasgo", "ratio", "raton", "rayas", "rayon", "razon", "recio", "recta", "recto", "regar", "regia", "regir", "regla", "rehen", "reina", "reino", "rejas", "relax", "reloj", "renal", "renta", "reñir", "reojo", "resta", "resto", "retar", "reten", "reuma", "reves", "reyes", "rezar", "riada", "ricos", "riega", "riego", "rifle", "rigor", "riñon", "risas", "risco", "ritmo", "rival", "rizos", "rimel", "robar", "roble", "robot", "rocio", "rodar", "rodeo", "rodio", "rogar", "rojas", "rojos", "rollo", "rompe", "rompo", "ronca", "ronda", "rondo", "roque", "rosal", "rosas", "rosca", "rotas", "rotor", "rotos", "rozar", "rubia", "rubio", "rublo", "rubor", "rubro", "rueca", "rueda", "ruedo", "ruego", "rugby", "rugir", "ruido", "ruina", "rumba", "rumbo", "rumor", "rupia", "rural", "rusia", "saben", "saber", "sabes", "sabia", "sabio", "sabia", "sable", "sabor", "sabre", "sacar", "sacro", "sagaz", "saldo",
+            "salen", "sales", "salga", "salgo", "salio", "salir", "salia", "salmo", "salon", "salsa", "salto", "salud", "salve", "salvo", "samba", "sanar", "santa", "santo", "saque", "sarna", "satan", "saten", "sauce", "saudi", "sauna", "savia", "sazon", "secar", "secta", "segun", "segn", "sello", "selva", "semen", "senda", "senil", "señal", "señor", "sepia", "seran", "serie", "serio", "seria", "sesgo", "sexta", "sexto", "sidra", "siete", "sigla", "siglo", "sigma", "signo", "sigue", "silla", "sirio", "sirve", "sirvo", "sismo", "sitio", "slips", "sobra", "sobre", "socio", "sodio", "solar", "soler", "somos", "sonar", "sonda", "soñar", "soplo", "sopor", "sorbo", "sordo", "sorgo", "soria", "sorna", "spray", "suave", "subir", "sucia", "sucio", "sudar", "sudor", "sueco", "suela", "suele", "suelo", "suena", "sueño", "suero", "sufra", "suite", "suiza", "suizo", "sumar", "sumir", "surco", "surje", "surjo", "susto", "sutil", "sper", "swing", "tabla", "tacha", "tacon", "tacto", "taifa", "talla", "talle", "tallo", "talon", "tanda", "tanga", "tango", "tanta", "tanto", "tapar", "tapia", "tapiz", "tapon", "tarda", "tarde", "tarea", "tarta", "tebeo", "techo", "tecla", "tecno", "tedio", "teide", "tejer", "tejon", "telar", "telon", "temas", "temer", "temor", "tempo", "tenaz", "tener", "tenga", "tengo", "tenia", "tenis", "tenia", "tenor", "tensa", "tenso", "tente", "tenue", "terco", "terna", "terra", "tesis", "teson", "tetas", "texto", "tibia", "tiene", "tieso",
+            "tifus", "tigre", "tilde", "timar", "timon", "tinta", "tinte", "tinto", "tipos", "tirar", "tiros", "tiron", "tocar", "todas", "todos", "toldo", "tomar", "tonal", "tonel", "tonta", "tonto", "topar", "toque", "tordo", "toreo", "torna", "torno", "toros", "torpe", "torre", "torso", "torta", "tosca", "tosco", "total", "torax", "traba", "traer", "trago", "traje", "trama", "tramo", "trapo", "trata", "trato", "traza", "trazo", "trece", "trepa", "tribu", "trigo", "trina", "tripa", "trono", "tropa", "trote", "trozo", "truco", "tucan", "tumba", "tumor", "turba", "turco", "turno", "tutor", "tnel", "ultra", "unida", "union", "urgir", "usted", "usual", "usura", "nica", "nico", "tero", "vacas", "vacia", "vacio", "vagar", "vagon", "vaina", "valer", "valia", "valla", "valle", "valor", "vamos", "vapor", "varia", "varon", "vasco", "vasto", "vayan", "vayas", "vater", "veces", "vejez", "velar", "velas", "vello", "veloz", "vemos", "venas", "vence", "venda", "venga", "vengo", "venia", "venir", "venta", "venus", "venzo", "veras", "verbo", "verde", "veria", "verja", "verlo", "verme", "versa", "verso", "vetar", "viaje", "vicio", "video", "vieja", "viejo", "viene", "vigia", "vigor", "villa", "viola", "viral", "viril", "virus", "visir", "visor", "vison", "vista", "visto", "vital", "viuda", "viudo", "vivaz", "viven", "vivir", "vivia", "video", "vocal", "vodka", "volar", "voley", "voraz", "votar", "votos", "vuela", "vuelo", "vulgo", "vulva", "xenon", "yacer", "yarda", "yegua", "yelmo", "yendo", "yerba", "yerma", "yerno", "yerro", "yihad", "yogur", "zaire", "zanco", "zanja", "zarpa", "zombi", "zonas", "zonzo", "zorra", "zorro", "zurda", "zurdo", "zurra"];
+        const LETRAS = "_ABCDEFGHIJKLMNÑOPQRSTUVWXYZ".split("");
+        $ = el => document.querySelector(el);
+        const div_letras = $("#letras");
+        for (l in LETRAS) {
+            let but = document.createElement("button");
+            but.append(LETRAS[l]);
+            but.className = "from";
+            but.addEventListener("click", click);
+            div_letras.append(but);
+            if (l % 9 == 0) {
+                div_letras.append(document.createElement("br"));
+            }
+        }
+
+        let from, to;
+
+        function click(ev) {
+            if (from) from.classList.remove("selected");
+            from = ev.target;
+            from.classList.add("selected");
+        }
+        function add_letter(but) {
+            if (from) {
+                from.classList.remove("selected");
+                but.innerHTML = from.innerHTML;
+            }
+            calculate();
+        }
+        function add_candidate() {
+            if (from) {
+                from.classList.remove("selected");
+                $("#candidates").append(from.innerHTML);
+            }
+            calculate();
+        }
+
+        function add_impossible() {
+            if (from) {
+                from.classList.remove("selected");
+                $("#impossibles").append(from.innerHTML);
+            }
+            calculate();
+        }
+        function calculate() {
+            const output = $("#output");
+            output.innerHTML = "";
+
+            let quiz = $("#quiz").children;
+            const impossibles = $("#impossibles").innerHTML.toLowerCase();
+
+            for (w in DB) {
+                const word = DB[w];
+                let ok = true;
+                for (let i = 0; i < impossibles.length; i++) {
+                    if (word.search(impossibles[i]) !== -1) {
+                        ok = false;
+                        break;
+                    }
+                }
+                if (!ok) continue;
+
+                let candidates_used = $("#candidates").innerHTML.toLowerCase();
+                for (let i = 0; i < 5; i++) {
+                    const letra = word[i];
+                    const letra_quiz = quiz[i].innerHTML.toLowerCase();
+                    if (letra_quiz !== "_") {
+                        if (letra_quiz !== letra) {
+                            ok = false;
+                            break;
+                        }
+                    } else if (candidates_used.search(letra) !== -1) {
+                        candidates_used = candidates_used.split(letra).join("");
+                    }
+                }
+                if (ok && candidates_used.length == 0) {
+                    output.append(word);
+                    output.append(document.createElement("br"));
+                }
+            }
+        }
+    </script>
+</body>
+
+</html>

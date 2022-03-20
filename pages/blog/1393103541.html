@@ -1,0 +1,27 @@
+<h2>Raymarching distance fields</h2>
+<div class="postdate" time="1393102349"></div>
+<p>
+    After long time admiring IQ"s work on raymarching (in <a
+        href="http://www.iquilezles.org/www/articles/raymarchingdf/raymarchingdf.htm" target="_blank">his website</a> or
+    in <a href="https://www.shadertoy.com/user/iq" target="_blank">ShaderToy</a>), and specially on raymarching distance
+    fields, I"ve always wanted to try to code one renderer of this kind on my own. I did a couple of basic raytracers in
+    the past, and this technique seems even funnier, so I had to try it eventually.
+</p>
+<p>Thinking of doing something for the current <a href="http://js1k.com" target="_blank">js1k</a> javascript contest, I
+    started a raymarcher in javascript. After some hours, this is what I got:</p>
+<img loading="lazy" src="*ROOT*/data/data/blog/raymarching.png" width="399" height="776"><br>
+<img loading=" lazy" src="*ROOT*/data/data/blog/raymarching2.png" width="398" height="199">
+
+<p>From top to bottom: basic "hit test" render, normals render, ray steps render, basic color with haze (fake lighting),
+    and render with basic shading (diffuse+specular+shadows).</p>
+
+<p><a href="http://feiss.be/exp/raymarching">Click here to try it</a>. Please give it some time to render (about 9 secs
+    on this Macbook)</p>
+<p>View source code for the guts of it, it"s fairly simple and short. Of course, the implementation is
+    <strong>far</strong> of being optimal, good, or even decent. I even doubt it is useful for learning purposes, but
+    maybe can help someone stuck in the first steps of the implementation of a raymarcher with distance fields. I just
+    thought on being pragmatic and simple, didn"t give a damn about speed or beauty code.
+</p>
+<p>Very, very fun stuff! even funnier than raytracing, I"d say! :)</p>
+<p><a href="https://www.google.es/search?q=raymarching+distance+fields&oq=raymarching+distance+fields&aqs=chrome..69i57j0l5.3823j0j7&sourceid=chrome&espv=210&es_sm=91&ie=UTF-8"
+        target="_blank">Juicy links on the topic</a> (I thoroughly read the 4 first results)</p>

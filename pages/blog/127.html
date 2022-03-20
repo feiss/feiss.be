@@ -1,0 +1,37 @@
+<h2>ups!</h2>
+<div class="postdate" time="1275697620"></div>
+<div>I missed a VERY important event in the <b>.fla</b> of <b>FlashUP</b>.&nbsp;<div><br>
+        It is <b>DataEvent.UPLOAD_COMPLETE_DATA</b>, which is called when the client receives the response from the
+        server, after the file was uploaded.&nbsp;</div>
+    <div><br>
+    </div>
+    <div>So, you"d have to add the event like this:<br>
+        <br>
+    </div>
+    <div>file.addEventListener(DataEvent.UPLOAD_COMPLETE_DATA, uploadCompleteHandler);<br>
+        <br>
+    </div>
+    <div>and then the hander:<br>
+        <br>
+        function uploadCompleteHandler(event:DataEvent):void<br>
+        {<br>
+        //this is when we have to call the js, not in completeHandler()<br>
+        ExternalInterface.call("flashup_fileComplete", event.target.name, event.data);<br>
+        }
+    </div>
+    <div><br>
+    </div>
+    <div>------</div>
+    <div><br>
+    </div>
+    <div>Another important thing to have in mind is that Flash upload connection opens a new session with the server, so
+        if you are using the flash uploader in a section which requires authentication, FlashUP is not going to work out
+        of the box.</div>
+    <div><br>
+    </div>
+    <div>The fix is to send the cookie or sessionid (or whatever you use) to the flash via <b>FlashVars</b>, and then
+        append that value to the server"s upload url, so it can check where the connection comes from.</div>
+    <div><br>
+    </div>
+    <div>A mess. Too many hours wasted to discover these things... -_-¡</div>
+</div><br>

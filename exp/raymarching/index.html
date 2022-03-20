@@ -1,0 +1,316 @@
+<!-- ------------------------------
+Basic raymarcher using distance fields. 
+by @feiss http://feiss.be
+
+the html template is borrowed from http://js1k.com
+------------------------------ -->
+
+<!doctype html>
+<html>
+
+<head>
+	<title>Rendering...</title>
+	<meta charset="utf-8" />
+	<meta author="Diego F. Goberna, @feiss">
+	<style>
+		pre {
+			overflow: scroll;
+			height: 400px
+		}
+
+		a {
+			text-decoration: none
+		}
+
+		html,
+		body {
+			margin: 20px;
+			padding: 0;
+			border: 0;
+		}
+
+		#c {
+			display: block;
+		}
+
+		/* kill scrollbars from hell */
+	</style>
+</head>
+
+<body>
+	<canvas id="c"></canvas><br />
+	<div><a href="http://feiss.be/blog/post/1393103541">About this</a></div>
+	<pre id="log"></pre>
+	<script>
+		var a = document.getElementsByTagName("canvas")[0];
+		var b = document.body;
+		var log = document.getElementById("log");
+		logtxt = "";
+		var d = function (e) { return function () { e.parentNode.removeChild(e); }; }(a);
+		// unprefix some popular vendor prefixed things (but stick to their original name)
+		var AudioContext =
+			window.AudioContext ||
+			window.webkitAudioContext;
+		var requestAnimationFrame =
+			window.requestAnimationFrame ||
+			window.mozRequestAnimationFrame ||
+			window.webkitRequestAnimationFrame ||
+			window.msRequestAnimationFrame ||
+			function (f) { setTimeout(f, 1000 / 30); };
+		a.width = 400;
+		a.height = 200;
+		a.style.width = a.width + "px";
+		a.style.height = a.height + "px";
+
+		var c = a.getContext("2d");
+	</script>
+	<script>
+
+		w = a.width
+		h = a.height
+		w2 = w / 2
+		h2 = h / 2
+
+		cam = v3(0, 0, -180);
+		MAXDIST = 999;
+		EPSILON = 0.01;
+
+		var scene = [
+			{ obj: "s", pos: v3(120, 30, 10), radius: 50, color: v3(1, 0.3, 0.3) },
+			{ obj: "s", pos: v3(-150, -30, 90), radius: 50, color: v3(1.0, 0.7, 0.2) },
+			{ obj: "s", pos: v3(-150, 40, 70), radius: 36, color: v3(0.2, 0.6, 0.4) },
+			{ obj: "s", pos: v3(70, 0, 150), radius: 80, color: v3(0.1, 0.5, 0.8) },
+			{ obj: "b", pos: v3(-130, -80, 100), size: v3(100, 50, 30), color: v3(0.8, 0.3, 0.85) },
+			{ obj: "p", pos: v3(0, -1, 0), radius: 80, color: v3(0.6, 0.65, 0.6) }
+		];
+
+		/*for (var i = 0; i < 10; i+=2)
+			scene.push({ obj:"b", pos: v3(-130, 100, i*60), size: v3(10, 70, 10), color: v3(0.6,0.6,0.6) });
+		*/
+
+
+		//only supports 1 light yet
+		var lights = [
+			{ pos: v3(-300, -220, -100), color: v3(1, 1, 1) }
+		];
+
+
+		draw();
+
+
+
+		function draw() {
+			var time = new Date().getTime();
+			var fb = c.createImageData(w, h);
+			for (var i = 0; i < w * h * 4; i += 4) {
+				var pix = v3((i / 4) % w - w2, Math.floor(i / w / 4) - h2, 0);
+				//	if (pix.y<0 || pix.y>40 || Math.abs(pix.x)>80) continue; //render region
+				var col = marching(norm(sub(pix, cam)));
+				fb.data[i + 0] = col.x;
+				fb.data[i + 1] = col.y;
+				fb.data[i + 2] = col.z;
+				fb.data[i + 3] = 255;
+			}
+			c.putImageData(fb, 0, 0);
+			time = new Date().getTime() - time;
+			tlog("render time: " + (Math.floor(time / 100) / 10) + "s");
+			document.title = "Rendering... Done!";
+			log.innerHTML = logtxt;
+		}
+
+		function marching(cdir) {
+			var p, dd, t = 0;
+			var steps = 1;
+
+			while (t < MAXDIST) {
+				p = add(cam, scale(cdir, t));
+				dd = sceneDistance(p);
+				if (dd.dist < EPSILON) break;
+				t += dd.dist;
+				steps++;
+			}
+			if (false) //change to true for ray steps render
+			{
+				steps = Math.min(255, steps * 8);
+				return v3(steps, steps, steps);
+			}
+			if (t >= MAXDIST) return shadeSky(cdir);
+			else return shade(dd.obj, p);
+		}
+
+		function sceneDistance(p) {
+			var min = MAXDIST;
+			var idx = -1;
+			var d, o;
+			for (o in scene) {
+				switch (scene[o].obj) {
+					case "s":
+						d = dist(p, scene[o].pos) - scene[o].radius;
+						break;
+					case "b":
+						var r = sub(abs(sub(scene[o].pos, p)), scene[o].size);
+						d = Math.min(Math.max(r.x, Math.max(r.y, r.z)), 0.0) + len(v3(Math.max(r.x, 0.0), Math.max(r.y, 0.0), Math.max(r.z, 0.0)));
+						break;
+					case "p":
+						d = dot(p, scene[o].pos) + scene[o].radius;
+						break;
+				}
+				if (d < min) {
+					min = d;
+					idx = o;
+				}
+			}
+			return { dist: min, obj: idx }
+		}
+
+		function shade(obj, p) {
+			var ambient = 0.25;
+			var col = scene[obj].color;
+			var l = norm(sub(lights[0].pos, p));
+			var l2 = norm(sub(p, lights[0].pos));
+			var normal = getNormal(obj, p);
+			var diffuse = dot(normal, l);
+			var shdw = diffuse ? shadow(lights[0].pos, l2, 10, len(sub(p, lights[0].pos)) - EPSILON, 2, obj) : 0;
+
+			diffuse = Math.max(ambient, diffuse * shdw);
+
+			var spec = 0;
+			var p2cam = norm(sub(cam, p));
+			if (diffuse > ambient)
+				spec = Math.pow(Math.max(0, dot(p2cam, reflect(scale(l2, -1), normal))), 16);
+			return scale(col, (diffuse + spec) * 255);
+		}
+
+		function shadeSky(dir) {
+			var mat = dir.y < 0 ? v3(0.5, 0.8, 1.0) : v3(0.5, 0.7, 0.3);
+			var haze = v3(0.8, 0.92, 1.0);
+			dir.y = Math.abs(dir.y * 2);
+			return v3(
+				mix(haze.x, mat.x, dir.y) * 255,
+				mix(haze.y, mat.y, dir.y) * 255,
+				mix(haze.z, mat.z, dir.y) * 255);
+		}
+
+		function getNormal(obj, p) {
+			switch (scene[obj].obj) {
+				case "s": return norm(sub(p, scene[obj].pos));
+					break;
+				case "b":
+					var m = addv(sub(p, scene[obj].pos), EPSILON);
+					if (Math.abs(m.x) >= scene[obj].size.x) return v3(m.x < 0 ? -1 : 1, 0, 0);
+					if (Math.abs(m.y) >= scene[obj].size.y) return v3(0, m.y < 0 ? -1 : 1, 0);
+					return v3(0, 0, m.z < 0 ? -1 : 1);
+					break;
+				case "t": return v3(0, -1, 0);
+				case "p": return scene[obj].pos;
+					break;
+			}
+			return v3(0, -1, 0);
+		}
+
+		function shadow(ro, rd, mint, maxt, k, obj) {
+			var res = 1.0, ob = -1;
+			for (var t = mint; t < maxt;) {
+				var h = sceneDistance(add(ro, scale(rd, t)));
+				if (h.dist < 0.001) return 0;
+				if (k * h.dist / t < res) {
+					res = k * h.dist / t;
+					ob = h.obj;
+				}
+				t += h.dist;
+
+			}
+			if (obj != ob) return res;
+			else return 1;
+		}
+
+
+
+		function vlog(v) {
+			if (logtxt.length > 10000) return;
+			logtxt += v.x + ", " + v.y + ", " + v.z + "<br>";
+		}
+		function tlog(t) {
+			if (logtxt.length > 10000) return;
+			logtxt += t + "<br>";
+		}
+
+
+		// Vector functions 
+
+		function v3(x, y, z) {
+			return { x: x, y: y, z: z }
+		}
+		function vcopy(v) {
+			return { x: v.x, y: v.y, z: v.z }
+		}
+		function mix(a, b, v) {
+			v = v > 1 ? 1 : (v < 0 ? 0 : v);
+			return a * (1 - v) + b * v;
+		}
+
+		function add(a, b) {
+			return { x: a.x + b.x, y: a.y + b.y, z: a.z + b.z }
+		}
+		function addv(a, v) {
+			return { x: a.x + v, y: a.y + v, z: a.z + v }
+		}
+		function sub(a, b) {
+			return { x: a.x - b.x, y: a.y - b.y, z: a.z - b.z }
+		}
+		function mul(a, b) {
+			return { x: a.x * b.x, y: a.y * b.y, z: a.z * b.z }
+		}
+		function div(a, b) {
+			return { x: a.x / b.x, y: a.y / b.y, z: a.z / b.z }
+		}
+		function scale(a, v) {
+			return { x: a.x * v, y: a.y * v, z: a.z * v }
+		}
+		function abs(a) {
+			return { x: Math.abs(a.x), y: Math.abs(a.y), z: Math.abs(a.z) }
+		}
+		function len(a) {
+			return Math.sqrt(a.x * a.x + a.y * a.y + a.z * a.z)
+		}
+		function dist(a, b) {
+			return len(sub(a, b))
+		}
+		function norm(a) {
+			return scale(a, 1 / len(a))
+		}
+		function normTo(a, v) {
+			return scale(a, 1 / len(a) * v)
+		}
+		function dot(a, b) {
+			return a.x * b.x + a.y * b.y + a.z * b.z;
+		}
+		function cross(a, b) {
+			return { x: a.y * b.z - a.z * b.y, y: a.z * b.x - a.x * b.z, z: a.x * b.y - a.yb.x }
+		}
+		function angle(a, b) {
+			return Math.acos(dot(a, b) / len(a) * len(b));
+		}
+		function reflect(a, b) {
+			return sub(scale(scale(b, dot(a, b)), 2), a);
+		}
+
+
+	</script>
+
+
+
+
+
+	<script>
+		var _gaq = [["_setAccount", "UA-5753152-1"], ["_trackPageview"]];
+		(function (d, t) {
+			var g = d.createElement(t),
+				s = d.getElementsByTagName(t)[0];
+			g.src = "//www.google-analytics.com/ga.js";
+			s.parentNode.insertBefore(g, s);
+		}(document, "script"));
+	</script>
+</body>
+
+</html>

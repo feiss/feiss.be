@@ -1,0 +1,235 @@
+<!doctype html>
+<html>
+<!--
+  The code of this page is based on the js1k.com shim template:
+  https://js1k.com/2019-x/shim.html
+  -->
+
+<head>
+  <meta charset="utf-8">
+  <title>An unreleased js1k entry</title>
+  <meta name="author" content="Diego F. Goberna">
+  <script>
+  </script>
+  <style>
+    body,
+    html,
+    iframe {
+      margin: 0;
+      padding: 0;
+      border: 0;
+      width: 100%;
+      height: 100%;
+      font-family: "Segoe UI", sans-serif;
+    }
+
+    iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      padding-top: 100px;
+      box-sizing: border-box
+    }
+
+    header {
+      position: relative;
+      z-index: 1;
+      height: 97px;
+      padding-top: 2px;
+      border-bottom: 1px solid #000;
+      box-shadow: 0 -10px 25px #ccc inset;
+      background-color: #eee
+    }
+
+    aside,
+    div,
+    h1,
+    p {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      text-align: center;
+      font-size: 21px;
+      font-weight: inherit;
+      padding: 0;
+      margin: 0;
+      cursor: default
+    }
+
+    p {
+      font-size: 19px;
+      margin-top: 3px;
+    }
+
+    aside,
+    h1 {
+      display: inline
+    }
+
+    a {
+      color: #182;
+      text-decoration: none
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .button {
+      display: none;
+    }
+
+    .button:hover {
+      color: red;
+      border-bottom-color: #888;
+    }
+
+    .r {
+      margin-right: 10px
+    }
+
+    time {
+      display: none
+    }
+  </style>
+</head>
+
+<body>
+  <header>
+    <div>
+      <h1>
+        An animation/sprite stack editor in <1024 Bytes &mdash; by <a href="http://feiss.be" target="_blank">@feiss</a>
+          <br>
+          An <b>unreleased</b> <a href="https://js1k.com/" target="_blank">JS1k</a> entry
+          | <a href="packed.js" target="_blank">packed code</a> | <a href="original.js" target="_blank">original
+            code</a>
+      </h1>
+      <p>
+        <em>
+          undo: <b>ctrl+z</b> | clear: <b>c</b> | toggle grid: <b>g</b> | fill: <b>alt+click</b>
+        </em>
+      </p>
+    </div>
+
+    <a href="500" class="button p">&Larr;</a>
+    <a href="502" class="button n">&Rarr;</a>
+  </header>
+
+  <script type="shim">
+      // this is the SHIM (will be ran in the context of the iframe...)
+
+      // unprefix some popular vendor prefixed things (but stick to their original name)
+      iwin.AudioContext = iwin.AudioContext || iwin.webkitAudioContext; // ios8 unmutes audio only during the first user triggered event with sound
+      iwin.requestAnimationFrame = iwin.requestAnimationFrame || iwin.mozRequestAnimationFrame || iwin.webkitRequestAnimationFrame || iwin.msRequestAnimationFrame || function(f){ iwin.setTimeout(f, 1000/30); };
+      canvas.requestPointerLock = canvas.requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock;
+      navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.mozGetUserMedia || navigator.msGetUserMedia;
+      if (typeof OscillatorNode !== "undefined" && OscillatorNode.prototype) {
+        OscillatorNode.prototype.start = OscillatorNode.prototype.start || OscillatorNode.prototype.noteOn;
+        OscillatorNode.prototype.stop = OscillatorNode.prototype.stop || OscillatorNode.prototype.noteOff;
+      }
+
+      a = canvas;
+      b = idoc.body;
+      d = idoc.document;
+
+      if (!TOKEN_WEBGL) iwin.c = canvas.getContext("2d");
+      else iwin.g = (function () {
+        iwin.onorientationchange = iwin.onresize = null;
+        try {
+          var o = { antialias: true, stencil: true };
+          var gl = canvas.getContext("webgl", o) || canvas.getContext("experimental-webgl", o);
+
+          // keep in scope, must not be garbage collected
+          iwin.__glExts =
+            [ "OES_texture_float", "OES_texture_float_linear", "OES_standard_derivatives",
+              "EXT_texture_filter_anisotropic", "MOZ_EXT_texture_filter_anisotropic", "WEBKIT_EXT_texture_filter_anisotropic",
+              "WEBGL_compressed_texture_s3tc", "MOZ_WEBGL_compressed_texture_s3tc", "WEBKIT_WEBGL_compressed_texture_s3tc"
+            ].map(function(ext) {
+                return gl.getExtension(ext);
+              });
+        } catch (e) {
+          idoc.body.innerHTML = "WebGL not supported.";
+          iwin.a=iwin.b=iwin.c=iwin.d=null;
+          throw e;
+        }
+
+        return gl;
+      })();
+    </script>
+  <script>
+    // submission form configurables:
+
+    // enable canvas shim at all? (2d/3d). other settings are ignored if this is false.
+    var TOKEN_CANVAS_SHIM = true;
+    // true enables webgl shim (exposes `g`), false enables canvas shim (exposes `c`)
+    var TOKEN_WEBGL = false;
+    // px, 0 means always 100%
+    var TOKEN_MAX_WIDTH = 0;
+    // px, 0 means always 100%
+    var TOKEN_MAX_HEIGHT = 0;
+    // should the size be smaller than specified if viewport is smaller?
+    var TOKEN_MAX_100P = true;
+    // only if width<100%
+    var TOKEN_CENTER_CANVAS = false;
+    // "press" reload button on orientation change?
+    var TOKEN_RELOAD_ONORIENTATIONCHANGE = true;
+  </script>
+  <script type="demo">
+
+    for(_="b.~==ZS(Y,fX1,W16V),U-VUT(0)Q~xP~yO(0|N32H)=>G*(e%HF(b,eEYp[b],D*Ne/HCDVFUVCU15+g))B.map(EG1]BU&&c.globalAlpha=n(.=b=>{down/V)+N+H*e,I[h]=,l=[]3CU3)UVXURE<544(=Math..push(10240,A[n)},<512	=EX,hG{.fill*(eZm)(.1*t)onmouse","D576+3FUI[H*NOP/V)]for(g=d=n=r=t=s=Wm=9,ScStyle="#"+b,cRect(eX,h,hp=["140c1c42330346d444854c30362d04648776597dced27d2c8595a17a3d2aa996dc2cadd6eee"],A=[],i=V;i--;)AArray()Q);KY222,UpYb,4+512,4H-8)Ub=b?b:I=],3,-15>W+WIbB,IAYeZn?"fff":444,5517,22)UM(rUo(tM=b=>A[0|b]128+o=(G{for(a in Y11W5624256UA)A[a]{var fsin,hcos;x=5FTy=5CTbDx*h-y*f+684,.5*(x*f+y*h)+430-6*a,7)}K(URh=H*Nfe/VU=bh<0<=h(m,RE+-XTREX+V)O	?P	?(lI.sliceQUs=n+1>s?n+1:s,~altKeyR(,P,OU=m):Pm=0|O/H):On=0|P/HUd=WK(movedO	P	(=mUK(up=(Gd=onkey71Z(k=~which)?g=!g:90Zkl.length?]=l.pop():67Zk?]Q:K(setInterval((GM(r=(r+.5)%s,o(t++)U50);";G=/[^ -AIKMRS[-}]/.exec(_);)with(_.split(G))_=join(shift());eval(_)
+
+
+    </script>
+  <script>
+    (function () {
+      var doc = document; var header = doc.getElementsByTagName("header")[0]; var firstChild = header.firstChild; var p = doc.getElementsByClassName("p")[0];
+      var n = doc.getElementsByClassName("n")[0]; header.insertBefore(p, firstChild); header.insertBefore(n, firstChild); header.appendChild(doc.getElementsByTagName
+        ("p")[0])
+    })(); (function reload(fullscreen) {
+      var doc = document; var header = doc.getElementsByTagName("header")[0]; var iframe = doc.createElement("iframe"); doc.
+        body.appendChild(iframe); var iwin = iframe.contentWindow; var idoc = iframe.contentDocument; idoc.open(); idoc.close(); idoc.write("<!doctype html>" + "<html st" +
+          "yle="margin: 0; padding: 0; border: 0; "+(TOKEN_CANVAS_SHIM?" width: 100 %; height: 100 %; ":"")+"">" + "<head>" + "<meta charset="utf - 8">" + "<body style="mar"+
+      "gin: 0; padding: 0; border: 0;" + (TOKEN_CANVAS_SHIM ? " width: 100%; height: 100%;" : "") + "" > "+(TOKEN_CANVAS_SHIM?" < canvas style = "display: block;" + (
+        TOKEN_CENTER_CANVAS ? " margin: auto;" : "") + "" ></canvas > ":"")+"");if(TOKEN_CANVAS_SHIM){var canvas=idoc.getElementsByTagName("canvas")[0];var cs=canvas.style
+        ; idoc.body.clientWidth; cs.width = (canvas.width = Math.max(Math.min(TOKEN_MAX_WIDTH || innerWidth, innerWidth), 0) || 0) + "px"; cs.height = (canvas.height = Math.max(
+          Math.min(TOKEN_MAX_HEIGHT || innerHeight - 50, innerHeight - 50), 0) || 0) + "px"
+    }if (TOKEN_RELOAD_ONORIENTATIONCHANGE) onorientationchange = reloadClick; iwin.AudioContext
+      = iwin.AudioContext || iwin.webkitAudioContext; iwin.requestAnimationFrame = iwin.requestAnimationFrame || iwin.mozRequestAnimationFrame || iwin.
+        webkitRequestAnimationFrame || iwin.msRequestAnimationFrame || function (f) { iwin.setTimeout(f, 1E3 / 30) }; if (TOKEN_CANVAS_SHIM) canvas.requestPointerLock = canvas.
+          requestPointerLock || canvas.mozRequestPointerLock || canvas.webkitRequestPointerLock; idoc.body.requestPointerLock = idoc.body.requestPointerLock || idoc.body.
+            mozRequestPointerLock || idoc.body.webkitRequestPointerLock; navigator.getUserMedia = navigator.getUserMedia || navigator.webkitGetUserMedia || navigator.
+              mozGetUserMedia || navigator.msGetUserMedia; var iwo = iwin.OscillatorNode && iwin.OscillatorNode.prototype; iwo && (iwo.start = iwo.start || iwo.noteOn) && (iwo.stop = iwo
+                .stop || iwo.noteOff); if (TOKEN_CANVAS_SHIM) iwin.a = canvas; iwin.b = idoc.body; d = idoc; if (TOKEN_CANVAS_SHIM) {
+                  if (!TOKEN_WEBGL) iwin.c = canvas.getContext("2d"); if (
+                    TOKEN_WEBGL) iwin.g = function () {
+                      iwin.onorientationchange = iwin.onresize = null; try {
+                        var o = { antialias: true, stencil: true }; var gl = canvas.getContext("webgl", o) ||
+                          canvas.getContext("experimental-webgl", o); iwin.__glExts = ["OES_texture_float", "OES_texture_float_linear", "OES_standard_derivatives", "EXT_texture_filter_" +
+                            "anisotropic", "MOZ_EXT_texture_filter_anisotropic", "WEBKIT_EXT_texture_filter_anisotropic", "WEBGL_compressed_texture_s3tc", "MOZ_WEBGL_compressed_textur" +
+                            "e_s3tc", "WEBKIT_WEBGL_compressed_texture_s3tc"].map(function (ext) { return gl.getExtension(ext) })
+                      } catch (e) {
+                        idoc.body.innerHTML = "WebGL not supported."; iwin
+                          .a = iwin.b = iwin.c = iwin.d = null; throw e;
+                      } return gl
+                    }()
+                } var demo = idoc.createElement("script"); demo.textContent = doc.querySelector("script[type="demo"]").
+                  textContent; idoc.body.appendChild(demo); idoc.close(); iframe.contentWindow.focus(); var firstLine = doc.getElementsByTagName("div")[0]; function reloadClick(b) { doc.body.removeChild(iframe); r.parentElement.removeChild(r); iframe = null; r = null; idoc = null; header = null; reload(b) } window.reload = reloadClick; var r = doc.
+      createElement("div"); r.innerHTML = "&#8635;"; r.className = "button r"; r.title = "restart just the demo (local, without remote fetch)"; r.onclick = reloadClick;
+    header.insertBefore(r, firstLine)}) ();
+  </script>
+
+
+  <script>
+    var _gaq = [["_setAccount", "UA-5753152-1"], ["_trackPageview"]];
+    (function (d, t) {
+      var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+      g.src = "//www.google-analytics.com/ga.js";
+      s.parentNode.insertBefore(g, s);
+    }(document, "script"));
+  </script>
+
+
+</body>
+
+</html>

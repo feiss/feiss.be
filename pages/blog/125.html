@@ -1,0 +1,56 @@
+<h2>Mouse Heatmaps</h2>
+<div class="postdate" time="1274931420"></div>
+<div>
+    <div>Yesterday I"ve received an email from <a href="http://reinvigorate.net">Reinvigorate.net</a>, telling that
+        their new stats system is available. I was surprised of one of their new features: <b>Heatmaps</b>. They record
+        all the clicks your visitors have done in your website and they show you all of them in that gorgeous way (you
+        can see an example clicking the fourth image in their homepage).</div>
+    <div><br>
+    </div>
+    <div>I"ve tried!, FSM knows it... but I could"n manage the urge for trying it by myself:</div>
+    <div><br>
+    </div>
+    <div><a href="http://feiss.be/exp/heatmaps/"><img src="http://feiss.be/data/-1/heatmaps.jpg" width="500"
+                height="372" /></a><br>
+    </div>
+    <div><br>
+    </div>
+    <div>This is the very rough and fast attempt. You can play with it here:&nbsp;</div>
+    <div><br>
+    </div><a href="http://feiss.be/exp/heatmaps/">http://feiss.be/exp/heatmaps/ </a>
+    <div><br>
+        It"s not the same stuff as reinvigorate, but similar. Instead of getting the clicks per page of many visitors,
+        it gets many clicks from one visitor, and renders the information using <a
+            href="http://en.wikipedia.org/wiki/Metaballs">metaballs</a>, like reinvigorate (although my colors are not
+        so nice :_(</div>
+    <div><br>
+    </div>
+    <div>Also, It records the <b>movement </b>of the mouse, showed in white tracks.</div>
+    <div><br>
+    </div>
+    <div>The thing uses the html5&nbsp;<b>canvas</b> element. I tried to do a progressbar, but it"s no possible*, the
+        DOM is not refreshed until the whole computation is done. I"ve tried with a <a
+            href="http://robertnyman.com/2010/03/25/using-html5-web-workers-to-have-background-computational-power/">Worker</a>,
+        but sadly, it seems that Workers don"t have access to the DOM, so time wasted (well, not exacly, I"ve learnt how
+        to use them ;)</div>
+    <div><br>
+    </div>
+    <div>The script is very slow! At first I"ve did it using ALL the page viewport, but it was too slow, so I"ve moved
+        the rendering to only the image area. Reinvigorate doesn"t have this problem, since their render is surely done
+        in the server (and using a native -and faster- code), but the fun thing of this little experiment was doing it
+        at the client&nbsp;<b>;)</b></div>
+    <div><br>
+    </div>
+    <div>Sorry, the code is really ugly, unoptimized and undocumented :P</div>
+    <div><br>
+    </div>
+    <div><br>
+    </div>
+    <div>*Well, I think that using Timers and using a renderRow() function it could be done, but I think it would be too
+        ugly, it doesn"t worth it :P</div>
+    <div><br>
+    </div>
+    <div>NOTE: <del>Upps, It seems It only works in Safari, I"ll try to correct it these days</del>. FIXED! (great
+        performance in Chrome, as usual :)<br>
+    </div>
+</div><br>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html>
+
+<head>
+	<title>feiss.be</title>
+	<style>
+		body {
+			font: 10px sans-serif;
+			color: #222;
+		}
+
+		a {
+			color: #222;
+			text-decoration: none;
+			background: #666;
+			padding: 1px 4px;
+		}
+
+		a:hover {
+			background: #777;
+		}
+
+		a:active {
+			background: #888;
+		}
+
+		canvas {
+			margin-top: 2px
+		}
+	</style>
+</head>
+
+<body bgcolor="#555">
+	<a href="http://feiss.be/blog">?</a>&nbsp;&nbsp;&nbsp;&nbsp;Number:
+	<a href="javascript:;" onclick="Z(N-10)">-10</a>
+	<a href="javascript:;" onclick="Z(N+10)">+10</a><br>
+	<canvas id="c"></canvas>
+
+	<script>
+		var d = document, C = d.getElementById("c"), c = C.getContext("2d"), W = 800, H = 300, i, j, dx, dy, r = 1, g, b, d, t = 50;
+		var items, R = Math.random, PI2 = Math.PI * 2, ABS = Math.abs, grays, N = 100;
+
+		function Z(n) {
+			var hex = "0123456789ABCDEF";
+			grays = [];
+			N = n;
+			for (i = 0; i < 100; i++) {
+				var a = hex.charAt(((55 + i * 2) & 0x00f0) >> 4);
+				var b = hex.charAt((55 + i * 2) & 0x000f);
+				grays[i] = "#" + a + b + a + b + a + b;
+			}
+
+			items = [];
+			for (i = 0; i < n; i++) {
+				items.push({ x: R() * W, y: R() * H, vx: R() * 2 - 1, vy: R() - .5 });
+			}
+
+		}
+
+		C.width = W;
+		C.height = H;
+		Z(N);
+		c.lineWidth = 0.1;
+
+		window.setInterval(loop, 30);
+
+		function loop() {
+			c.globalAlpha = .4;
+			c.fillStyle = "#353535";
+			c.rect(0, 0, W, H);
+			c.fill();
+			c.fillStyle = "#FFF";
+			for (i = 0; i < items.length; i++) {
+				if (items[i].x < 0) items[i].vx = ABS(items[i].vx);
+				if (items[i].x > W) items[i].vx = -ABS(items[i].vx);
+				if (items[i].y < 0) items[i].vy = ABS(items[i].vy);
+				if (items[i].y > H) items[i].vy = -ABS(items[i].vy);
+
+				items[i].x += items[i].vx;
+				items[i].y += items[i].vy;
+
+				for (j = i + 1; j < items.length; j++) {
+					d = dist(i, j);
+					if (d < 100) {
+						c.strokeStyle = grays[100 - Math.floor(d)];
+						c.beginPath();
+						c.moveTo(items[i].x, items[i].y)
+						c.lineTo(items[j].x, items[j].y)
+						c.closePath();
+						c.stroke();
+					}
+					if (d < r << 1) {
+						items[i].vx *= -1;
+						items[i].vy *= -1;
+						items[j].vx *= -1;
+						items[j].vy *= -1;
+					}
+
+				}
+
+				c.fillStyle = "#FFF";
+				c.globalAlpha = .9;
+				c.beginPath();
+				c.arc(items[i].x, items[i].y, r, 0, PI2, true);
+				c.closePath();
+				c.fill();
+			}
+		}
+
+		function dist(i, j) {
+			dx = items[i].x - items[j].x;
+			dy = items[i].y - items[j].y;
+
+			return Math.sqrt(dx * dx + dy * dy);
+		}
+
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,102 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>In Blue - Making of</title>
+	<script>
+		var idx = 1;
+		var playinterval;
+		function play(dom) {
+			if (dom.innerHTML == "Play") {
+				dom.innerHTML = "Pause";
+				playinterval = setInterval(function () { jumpTo(idx + 1) }, 800);
+				jumpTo(idx + 1);
+			}
+			else {
+				dom.innerHTML = "Play";
+				clearInterval(playinterval);
+			}
+		}
+
+		function jumpTo(where) {
+			idx = parseInt(where);
+			if (idx < 1) idx = 1;
+			if (idx > 37) {
+				idx = 37;
+				clearInterval(playinterval);
+			}
+			document.getElementById("slider").value = idx;
+			document.getElementById("inblue").src = "inblue" + idx + ".gif";
+		}
+		for (var i = 1; i <= 37; i++) {
+			img = new Image();
+			img.src = "inblue" + i + ".gif";
+		}
+	</script>
+	<style>
+		body {
+			width: 640px;
+			margin: 20px auto;
+			background: #222;
+			color: #7d7d7d;
+			font-size: 12px;
+			font-family: arial, sans-serif;
+			line-height: 20px;
+		}
+
+		h1 {
+			font-family: Georgia, times;
+			color: #5776aa;
+		}
+
+		a {
+			color: #4d688d;
+			text-decoration: none;
+			background: #333;
+			padding: 5px 15px;
+		}
+
+		a:hover {
+			color: #5776aa;
+			background: #383838;
+		}
+
+		p a {
+			background: none;
+			padding: 0;
+		}
+
+		input[type="range"] {
+			width: 640px;
+		}
+	</style>
+
+</head>
+
+
+<body>
+	<h1>In Blue</h1>
+	<p>This is the "making of" of a pixelated image I did back in 2002, from <a href="../photo.gif" target="_blank">a
+			photo reference</a>. <br>Click on next and prev links or use the slider. <a href="http://feiss.be">Who am
+			I?</a></p>
+
+	<img src="inblue37.gif" alt="progress" id="inblue"><br>
+	<input type="range" max="37" min="1" value="1" id="slider" onchange="jumpTo(this.value)"><br>
+	<a href="javascript:;" onclick="play(this)" id="next" style="float:right">Play</a>
+	<a href="javascript:;" onclick="jumpTo(idx-1)" id="prev">Prev</a> &nbsp;
+	<a href="javascript:;" onclick="jumpTo(idx+1)" id="next">Next</a>
+
+	<script>
+		var _gaq = [["_setAccount", "UA-5753152-1"], ["_trackPageview"]];
+		(function (d, t) {
+			var g = d.createElement(t),
+				s = d.getElementsByTagName(t)[0];
+			g.src = "//www.google-analytics.com/ga.js";
+			s.parentNode.insertBefore(g, s);
+		}(document, "script"));
+	</script>
+
+</body>
+
+</html>

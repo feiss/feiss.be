@@ -1,0 +1,68 @@
+<div style="width:100%;float:left;overflow:hidden">
+	<?php 
+	$first=" first";
+	 foreach($posts as $key=>$post)
+	 {
+		echo "<div class="post$first"><a name="$key"></a>";
+		echo "<div>".parse_human_date($post)."</div>";
+		echo "<p><a href="/blog/post/$key#comments">";
+		if ($numcomments[$key]>0) echo "View ".$numcomments[$key]." comment".($numcomments[$key]>1?"s":""); 
+		else echo "Comment";
+		echo "</a>";
+		echo "<a href="javascript:;" onclick="share(\"f\",\"http://feiss.be/blog/post/".$key."\")" class="fb"></a>&nbsp;<a href="javascript:;" title="Share on Google+" onclick="share(\"g\",\"http://feiss.be/blog/post/".$key."\")" class="gp"></a>&nbsp;<a href="javascript:;" onclick="share(\"t\",\"http://feiss.be/blog/post/".$key."\")" class="twt"></a>";
+		echo "</p></div>";
+		$first="";
+	}
+?>
+	<div>
+		<p>&nbsp;</p>
+		<?php if ($pageprev!==false):?><a href="/blog/page/<?php echo $pageprev; ?>">Previous posts</a>
+		<?php endif; ?>
+		<?php if ($pagenext!==false):?> / <a href="/blog/page/<?php echo $pagenext;?>">More recent posts</a>
+		<?php endif; ?>
+	</div>
+
+</div>
+<div class="sidebar">
+	<?php echo $sidebar;?>
+</div>
+
+
+<?php
+
+function parse_human_date($str)
+{
+	$pos1= stripos($str, "time="");
+	if ($pos1===false) return $str;
+	$pos1+= strlen("time="");
+	$pos2= stripos($str, """, $pos1)+1;
+	if ($pos2===false) return $str;
+	$ts= substr($str, $pos1, $pos2-$pos1-1);
+	if (!is_numeric($ts)) return $str;
+	$ts= intval($ts);
+	$ret= substr($str, 0, $pos2);
+	$ret.= " title="".std_date($ts)."">".human_date($ts).substr($str, $pos2+1);
+	return $ret;
+}
+
+function human_date($timestamp)
+{
+	$diff= time()-intval($timestamp);
+	
+	if ($diff < 60) $val=$diff." sec";// return "$diff secs ago ($date)";
+	else if ($diff < 3600) $val= intval($diff/60)." min";//." mins ago ($date)";
+	else if ($diff < 3600*24) $val= intval($diff/3600)." hour";//." hours ago ($date)";
+	else if ($diff < 3600*24*30.5) $val= intval($diff/(3600*24))." day";//." days ago ($date)";
+	else if ($diff < 3600*24*30.5*12) $val= intval($diff/(3600*24*30.5))." month";//." months ago ($date)";
+	else $val= intval($diff/(3600*24*30.5*12))." year";//" years ago ($date)";
+	
+	if ($val[1]==" " && ($val[0]=="0" || $val[0]=="1")) return $val." ago";
+	return $val."s ago";
+}
+
+function std_date($timestamp)
+{
+	return @date("d M Y, \a\t H:i", intval($timestamp));
+}
+
+?>

@@ -1,0 +1,84 @@
+<h2>La revelación de las plantillas Devololor-zapatillas</h2>
+<div class="postdate" time="1203926481"></div>
+<div>He leido el otro día un <a href="http://www.massassi.com/php/articles/template_engines/" target="_blank">articulo
+        muy interesante</a> de <strong>Brian Lozier</strong> que me abrió los ojos al respecto del uso de librerías de
+    <strong>templates</strong> en <strong>PHP</strong>. <br>
+    <br>
+    He trabajado bastante con <a href="http://www.smarty.net/" target="_blank">Smarty</a>, luego cambié a <a
+        href="http://templatelite.sourceforge.net/" target="_blank">Template Lite</a> e hice algunas cosas, pero seguía
+    sin ser lo suficientemente <i>"lite"</i> para mi gusto. Probé luego con <a
+        href="http://www.phpxtemplate.org/HomePage" target="_blank">XTemplate</a>, pero ví que no era suficientemente
+    flexible (no tiene bloques <strong>IF</strong>!?), y hasta comencé a hacerme mi propia librería.<br>
+    <br>
+    Hasta que leí el articulo mencionado. Resulta que la mejor librería es <strong>no usar ninguna
+        librería</strong>.<br>
+    <br>
+    <a href="javascript:;" onclick="javascript:$(" #more").slideToggle();"><b>Continuar leyendo...</b></a>
+    <div style="display:none;" id="more"><br>
+        La idea es mantener el patrón <a href="http://es.wikipedia.org/wiki/Modelo_Vista_Controlador"
+            target="_blank">MVC</a>, pero sin tener que parsear la vista. Simplemente desde el controlador exportas las
+        variables a la vista, que no es más que un html con PHP inyectando las variables. A la hora de entregar la
+        página, desde el controlador se hace un <strong>include</strong> de la vista, y las variables se resuelven tal
+        cual.<br>
+        <br>
+        Aquí está la librería/clase que lo hace todo (una simplificación del código del <a
+            href="http://www.massassi.com/php/articles/template_engines/" target="_blank">artículo</a>)<br>
+        <pre
+            style="background-color:#f0eecc">class <strong>Template</strong> {    var $vars; <i>// Las variables que se exportan</i>    function <strong>set</strong>($name, $value) {        $this->vars[$name] = is_object($value) ? $value->fetch() : $value;    }    function <strong>fetch</strong>($file) {        if(!$file) $file = $this->file;        <strong>extract($this->vars);          </i>// Publicar las variables al contexto actual</i></strong>        ob_start();                    <i>// Abrir buffer de salida</i><strong>        include($file);                <i>// Incluir la template</i></strong>        $contents = ob_get_contents(); <i>// Capturar el contenido del buffer</i>        ob_end_clean();                <i>// Finalizar buffer</i>        return $contents;              <i>// Devolver el buffer con el contenido de                                       // la template con las variables resueltas</i>    }}</pre>
+        <br>
+        Un ejemplo rápido de uso:<br>
+        <br>
+        <table border=0>
+            <tr>
+                <td width="50%"><strong>index.html.tpl</strong>
+                    <pre
+                        style="background-color:#f0eecc">&lt;html&gt; &lt;body&gt;  &lt;h1&gt; Hola <b>&lt;?=$nombre?&gt;</b> &lt;h1&gt; &lt;/body&gt;&lt;/html&gt;</pre>
+                </td>
+                <td><strong>index.php</strong>
+                    <pre
+                        style="background-color:#f0eecc">&lt;?php  $tpl = & new <strong>Template</strong>();  $tpl-><strong>set</strong>("nombre", "Juanito Navarro");  echo $tpl-><strong>display</strong>("index.html.tpl");?&gt;</pre>
+                </td>
+            </tr>
+        </table><br>
+        <b>Ventajas:</b>
+        <ol>
+            <li>No se parsea la template en busca de tokens, simplemente se carga con el include, así que es mucho más
+                rápido y ligero que cualquier librería convencional de templates.</li>
+            <li>No hay que aprender un lenguaje de marcación nuevo, es puro PHP</li>
+            <li>Se dispone de todas las funciones y posibilidades de PHP </li>
+            <li>Se conserva perfectamente la separación Vista - Controlador. Es más, es posible meter toda la lógica que
+                se quiera en la Vista, algo incómodo usando librerías. Es la Vista quien decide cómo mostrar los datos,
+                así que esta lógica no debería estar en el controlador.</li>
+            <li>Se pueden incluir templates dentro de templates, recursivamente</li>
+            <li>Se puede cachear el resultado (en el artículo se incluye una versión con caché)</li>
+        </ol><b>Inconvenientes:</b>
+        <ol>
+            <li>Es algo feo meter los tags del php dentro del html.</li>
+        </ol>Pero realmente, la cantidad de código es la misma que con una librería, si no menos!:<br>
+        <br>
+        <table border=0>
+            <tr>
+                <td width="50%"><strong>Con Smarty:</strong>
+                    <pre
+                        style="background-color:#f0eecc">&lt;html&gt; &lt;body&gt;  <b>{section name="i" loop="$nombres"}    {if $nombres[i]!="Juan"}</b>        Hola <b>{$nombres[i]}</b>!     <b>{/if}  {/section}</b> &lt;/body&gt;&lt;/html&gt;</pre>
+                </td>
+                <td><strong>Con plantillas Devololor-zapatillas:</strong>
+                    <pre
+                        style="background-color:#f0eecc">&lt;html&gt; &lt;body&gt;  <b>&lt;?foreach ($nombres as $i):?&gt;    &lt;?if ($i!="Juan"):?&gt;</b>        Hola <b>&lt;?=$i?&gt;</b>!     <b>&lt;?endif;?&gt;  &lt;?endforeach;?&gt;</b> &lt;/body&gt; &lt;/html&gt;</pre>
+                </td>
+            </tr>
+        </table>La cantidad de tags necesarios son los mismos. Es cuestion de tener <a href="http://macromates.com/"
+            target="_blank">un buen editor de textos</a> para colorearlos ;)<br>
+        <br>
+        <b>Conclusión: </b> <br>
+        No veo razón para utilizar una librería de templates especial. La solución propuesta por el sr. <strong>Brian
+            Lozier</strong> me parece hasta ahora perfecta, tienes todas las ventajas y casi ninguna desventaja. A
+        medida que vaya trabajando posiblemente le iré añadiendo métodos a la clase Template, pero poco más, que es lo
+        que -a bote pronto- la librería <a href="http://phpsavant.com" target="_blank">Savant</a> parece que hace.<br>
+        <br>
+        Después de casi 3 años utilizando librerías de templates, que en un principio resultan tan cómodas, limpias y
+        resolutivas, sorprende esta solución tan lúcida y sencilla. Como siempre, las ideas más simples son las mejores!
+        :)
+    </div><br>
+
+</div><br>

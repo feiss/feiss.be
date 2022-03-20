@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Commented Banner</title>
+
+	<link href="http://fonts.googleapis.com/css?family=Electrolize" rel="stylesheet" type="text/css">
+
+	<style>
+		body {
+			margin: 20px;
+			font: 16px verdana;
+			line-height: 30px;
+		}
+
+		input {
+			padding: 5px 10px;
+			border-radius: 4px;
+			outline: none;
+			border: 1px solid #777;
+			background: #eee;
+		}
+
+		canvas,
+		pre {
+			background: #eee;
+			line-height: 13px;
+			padding: 10px;
+			font-family: monospace;
+		}
+	</style>
+</head>
+
+<body>
+	<p>
+		Banner text:
+		<input type="text" id="tt" onkeyup="makebanner(this)" value="Hello World!">
+		Symbol: <select id="char" onchange="makebanner()">
+			<option>O</option>
+			<option>#</option>
+			<option>@</option>
+			<option>/</option>
+			<option>*</option>
+		</select>
+	</p>
+	<canvas id="cc" width="200" height="50"></canvas><br>
+	<pre id="pp"></pre>
+
+	<script>
+		function makebanner() {
+			var tt = document.getElementById("tt");
+			var text = "", origtext = tt.value.toUpperCase();
+			for (var t in origtext) text += origtext[t] + " ";
+			//text= origtext;
+			var canvas = document.getElementById("cc");
+			canvas.width = Math.floor(10 * origtext.length);
+			canvas.height = 9;
+			var c = canvas.getContext("2d");
+			c.fillStyle = "#fff";
+			c.fillRect(0, 0, canvas.width, canvas.height);
+			c.font = "9px Electrolize";
+			c.fillStyle = "#000";
+			c.fillText(text, 2, 8);
+			c.fillText(text, 3, 8);
+			var ch = document.getElementById("char").value;
+			var d = c.getImageData(0, 0, canvas.width, canvas.height);
+			var res = "//";
+			var W = canvas.width;
+			for (var i = 0; i < d.data.length; i += 4) {
+				if (i && !(i % (W * 4))) res += "\n//";
+				res += d.data[i] > 180 ? ch : " ";
+				//d.data[i]=255;
+			}
+			c.putImageData(d, 0, 0);
+			console.log(res);
+			document.getElementById("pp").innerHTML = res;
+
+			tt.focus();
+		}
+		makebanner();
+
+	</script>
+</body>
+
+</html>

@@ -1,0 +1,69 @@
+<h2>FlashUP</h2>
+<div class="postdate" time="1275590100"></div>
+<div>
+    <div>This is a small "web component" I"ve just made for handling uploads. It uses Flash to support multiple files at
+        once, to be a little more robust than simple html, and to have information of the upload progress, which is
+        displayed using javascript+css.</div>
+    <div><br>
+    </div>
+    <div> <object classid="clsid:d27cdb6e-ae6d-11cf-96b8-444553540000"
+            codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=10,0,0,0"
+            id="flashupvideo" width="324" align="middle" height="263">
+            <param name="allowScriptAccess" value="sameDomain">
+            <param name="allowFullScreen" value="false">
+            <param name="movie" value="http://feiss.be/data/-1/flashupvideo.swf">
+            <param name="menu" value="false">
+            <param name="quality" value="high">
+            <param name="scale" value="noscale">
+            <param name="bgcolor" value="#666666"> <embed src="http://feiss.be/data/-1/flashupvideo.swf" menu="false"
+                quality="high" scale="noscale" bgcolor="#666666" name="flashupvideo" allowscriptaccess="sameDomain"
+                allowfullscreen="false" type="application/x-shockwave-flash"
+                pluginspage="http://www.adobe.com/go/getflashplayer" width="324" align="middle" height="263">
+        </object> <br>
+    </div>
+    <div>(well, in the video the upload is done locally and the files are relatively small, so the progress bars go from
+        0 to 100 :P)</div>
+    <div><br>
+    </div>
+    <div><br>
+    </div>
+    <div><a href="http://feiss.be/data/-1/flashup.zip">Download FlashUP</a><br>
+        <div><br>
+        </div>
+        <div>The installation is very simple:</div>
+        <div><br>
+        </div>
+        <blockquote><b>1.</b> In your HTML, put the traditional code for a file upload:<br>
+            <br>
+        </blockquote>
+        <div>
+            <p></p>
+            <blockquote>&lt;form action="upload.php" method="post" enctype="multipart/form-data"&gt;</blockquote>
+            <blockquote>&lt;input type="file" name="file" id="fileid"&gt;&lt;br&gt;</blockquote>
+            <blockquote>&lt;input type="submit"&gt;</blockquote>
+            <blockquote>&lt;/form&gt;</blockquote>
+        </div>
+        <div><br>
+        </div>
+        <div><b>2.</b> Include<b> flashup.js</b>, and call <b>flashup("fileid")</b> function after the page is
+            loaded.&nbsp;</div>
+        <div><br>
+        </div>
+        <div><b>3.</b> Set your button and progress bars style (see index.html included in the package)</div>
+        <div><br>
+        </div>
+        <div>If Flash is available, the form content will be replaced by <b>FlashUP</b>, and files can be uploaded like
+            balloons in the air. If Flash is not available, the form will remain as originally was.</div>
+        <div><br>
+        </div>
+        <div>The code it"s very simple and straightforward, I just made something lightweight and productive for my own
+            projects, and&nbsp;I thought someone could use it too, so here it is :)</div>
+        <div><br>
+        </div>
+        <div>Cheers!</div>
+        <div><br>
+        </div>
+        <div><br>
+        </div>
+    </div>
+</div><br>

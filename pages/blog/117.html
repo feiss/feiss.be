@@ -1,0 +1,99 @@
+<h2>Perdidos en Cooperalia</h2>
+<div class="postdate" time="1267309260"></div>
+<div>Hace tiempo que no doy noticias. La verdad es que este comienzo de año ha sido bastante estresante, llegando a
+    solapar tres proyectos a la vez (además de mi trabajo de 8 horas en Bren). Poco a poco estos proyectos se van
+    finalizando, y empiezo a ver la luz al final del túnel.<div><br>
+    </div>
+    <div>Uno de estos proyectos es un juego Flash que realicé con <a href="http://www.orge.es/">Orge</a>,&nbsp;<a
+            href="http://danimontero.blogspot.com/">Dani Montero</a>,&nbsp;<a href="http://www.penthagram.com">David
+            García</a>&nbsp;y&nbsp;<a href="http://zafio.com">Julio Iglesias</a>&nbsp;para <a
+            href="http://www.cooperativasdegalicia.com">Cooperativas de Galicia</a>, que&nbsp;solicitaron un juego que
+        fomentara la idea de la <b>cooperación</b>. Tras darle vueltas a varias opciones, optamos por realizar una
+        versión moderna y simplificada del clásico <a href="http://www.youtube.com/watch?v=O9-vzB0dIzU">Lost
+            Vikings</a>.&nbsp;Tres compañeros, cada uno con sus habilidades, deben cooperar para pasar cada una de las
+        15 pantallas del juego.</div>
+    <div><br>
+    </div>
+    <div align="center"><a href="http://www.cooperativasdegalicia.com/cooperclan">Perdidos en Cooperalia</a></div>
+    <div><a href="http://www.cooperativasdegalicia.com/cooperclan"><br>
+        </a></div>
+    <div><a href="http://www.cooperativasdegalicia.com/cooperclan"><img src="http://feiss.be/data/-1/imaxePoste.jpg"
+                width="543" height="244" /></a><br>
+    </div>
+    <div><br>
+    </div>
+    <div>David se ocupó de la música, Dani de los gráficos (con puntuales aportaciones de Julio), Orge del guión,
+        coordinación, diseño de niveles y gameplay, yo&nbsp;me ocupé de toda la programación.&nbsp;</div>
+    <div><br>
+    </div>
+    <div>Creo que lo más difícil del juego fue saber poner los límites, y diseñar el gameplay del juego. Dado el tiempo
+        de desarrollo que teníamos (sobre dos meses) y el tipo de juego que se quería hacer, sabíamos que no iba a ser
+        un juego simple y típico de Flash, pero tampoco podíamos irnos por las ramas y pretender -como suele pasar-
+        hacer un <a href="http://en.wikipedia.org/wiki/Machinarium">Machinarium</a>. Había que poner los límites, tanto
+        en cantidad de música y efectos, en gráficos, y en complejidad de programación.</div>
+    <div><br>
+    </div>
+    <div>Finalmente fuimos quienes de llegar a buen puerto, y aunque en la lucha contra el tiempo siempre se sale
+        perdiendo, y quedaron muchas cosas por mejorar y por realizar, creo que es un producto bastante decente.&nbsp;
+    </div>
+    <div><br>
+    </div>
+    <div>Mis agradecimientos a Orge, Dani, David y Julio (buen trabajo a todos!), y a los familiares y allegados que
+        sufrieron nuestras ausencias.</div>
+    <div><br>
+    </div>
+    <div>:)</div>
+    <div><br>
+    </div>
+    <div><br>
+    </div>
+    <div><b>Datos técnicos para los interesados y curiosos:&nbsp;</b></div>
+    <div><br>
+    </div>
+    <div>En cuanto a lo que me toca -programación-, fue un proyecto muy interesante. Al comienzo lo más complicado fue
+        el tema de las colisiones con el terreno -un terreno totalmente arbitrario e irregular-, para lo que tuve que
+        realizar bastantes pruebas y prototipos. Luego estuvo interesante la organización y precarga de todos los assets
+        y niveles, y por último, la gestión de todo el gameplay, las relaciones y dependencias entre los objetos, etc.
+    </div>
+    <div>
+        <div><br>
+        </div>
+    </div>
+    <div>- Las colisiones de los personajes con el escenario se realizan con<b>
+            &nbsp;elemento_del_escenario<b>.hitTestPoint(punto_personaje)</b>&nbsp;</b></div>
+    <div><br>
+    </div>
+    <div>Los elementos del escenario pueden ser los suelos/techos, las paredes, las plataformas, objetos, etc. y cada
+        personaje puede tener hasta 9 puntos de colisión (en las mismas posiciones que las casillas de un tres en raya).
+    </div>
+    <div><br>
+    </div>
+    <div>- Todos los sprites (jugadores, enemigos, objetos, etc.) del juego van juntos en un swf, a modo de librería.
+        &nbsp;Cada pantalla va en un .swf independiente, y simplemente contiene los fondos y clips "bien nombrados" que
+        indican dónde van los assets del swf librería.</div>
+    <div><br>
+    </div>
+    <div>
+        <div
+            style="vertical-align: baseline; font-weight: inherit; font-family: inherit; font-style: inherit; font-size: 16px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-top-style: none; border-right-style: none; border-bottom-style: none; border-left-style: none; border-color: initial; outline-width: 0px; outline-style: initial; outline-color: initial; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; ">
+            - Ficheros/clases utilizados:&nbsp;Enemy.as,&nbsp;Item.as,&nbsp;Target.as,
+            Entity.as,&nbsp;KeyPoll.as,&nbsp;Food.as,&nbsp;Level.as,&nbsp;G.as,&nbsp;Player.as,&nbsp;InventoryItem.as&nbsp;
+        </div>
+        <div
+            style="vertical-align: baseline; font-weight: inherit; font-family: inherit; font-style: inherit; font-size: 16px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-top-style: none; border-right-style: none; border-bottom-style: none; border-left-style: none; border-color: initial; outline-width: 0px; outline-style: initial; outline-color: initial; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; ">
+            Los gordos son&nbsp;<b
+                style="vertical-align: baseline; font-weight: bold; font-family: inherit; font-style: inherit; font-size: 16px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-top-style: none; border-right-style: none; border-bottom-style: none; border-left-style: none; border-color: initial; outline-width: 0px; outline-style: initial; outline-color: initial; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; color: rgb(82, 84, 68); ">Level.as</b>,
+            que gestiona todo el loop principal, colisiones y lógica del juego, y&nbsp;<b
+                style="vertical-align: baseline; font-weight: bold; font-family: inherit; font-style: inherit; font-size: 16px; border-top-width: 0px; border-right-width: 0px; border-bottom-width: 0px; border-left-width: 0px; border-top-style: none; border-right-style: none; border-bottom-style: none; border-left-style: none; border-color: initial; outline-width: 0px; outline-style: initial; outline-color: initial; padding-top: 0px; padding-right: 0px; padding-bottom: 0px; padding-left: 0px; margin-top: 0px; margin-right: 0px; margin-bottom: 0px; margin-left: 0px; color: rgb(82, 84, 68); ">Player.as</b>,
+            que gestiona los movimientos y acciones de los jugadores.</div>
+        <div><br>
+        </div>
+    </div>
+    <div>- Toda la música y sonidos están en mp3 externos, para que David pudiera modificarlos y probar cómo quedan en
+        el juego.</div>
+    <div><br>
+    </div>
+    <div>- A grandes rasgos: 3000 líneas de código indocumentado, 10 MB de sonido, y 4MB de gráficos.</div>
+    <div><br>
+    </div>
+</div><br>

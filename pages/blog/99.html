@@ -1,0 +1,68 @@
+<h2>Buscando Trenes en Renfe</h2>
+<div class="postdate" time="1250613840"></div>
+<div>Alguna gente me ha preguntado cómo extraigo la información de Renfe para poder elaborar los horarios que se
+    muestran en la aplicación de <a href="http://diego.goberna.net/trenes/">Trenes</a>, y en la webApp <a
+        href="http://www.apple.com/webapps/travel/spaintraintimes.html">Spanish Train Times</a>. <br>
+    <br>
+    Es bastante sencillo. Utilizo como base la dirección <strong><a
+            href="http://www.renfe.es/horarios/index.html">http://www.renfe.es/horarios/index.html</a></strong> [1],
+    donde se pueden consultar todos los viajes (que no sean de cercanías) de la red española. Si hacéis una búsqueda
+    (por ejemplo, <strong>Vigo -&gt; Madrid</strong> el <strong>1</strong> de <strong>Diciembre </strong>de
+    <strong>2009</strong>), vereis que se abre una ventana con los resultados. Esta ventana tiene varios marcos
+    (frames), el que nos interesa es el que contiene los horarios, así que mostramos solamente ese marco, y vemos su
+    dirección:<br>
+    <br>
+    <blockquote>
+        <p><a
+                href="http://horarios.renfe.es/hir/hjhir130.jsp?O=22303&amp;D=MADRI&amp;AF=2009&amp;MF=12&amp;DF=01&amp;SF=2&amp;ID=s">http://horarios.renfe.es/hir/hjhir130.jsp?<strong>O</strong>=22303&amp;<strong>D</strong>=MADRI&amp;<strong>AF</strong>=2009&amp;<strong>MF</strong>=12&amp;<strong>DF</strong>=01&amp;<strong>SF</strong>=2&amp;<strong>ID</strong>=s</a>
+            [2]</p>
+        <p></p>
+    </blockquote>Los parámetros los marco en negrilla, y son:<br>
+    <br>
+    <strong>O</strong>: código de la estación origen<br>
+    <strong>D</strong>: código de la estación destino<br>
+    <strong>AF</strong>: Año (cuatro dígitos)<br>
+    <strong>MF</strong>: Mes (de 1 a 12, dos dígitos)<br>
+    <strong>DF</strong>: Día (dos dígitos)<br>
+    <strong>SF</strong>: Día de la semana (un dígito, de 1 a 7 -Lunes a Domingo)<br>
+    <strong>ID</strong>: una "s" :P<br>
+    <br>
+    Así que es tan sencillo como rellenar estos parámetros de acorde con la consulta que se quiere hacer. Los códigos de
+    las estaciones se pueden ver en el link "<strong>Todas las estaciones</strong>", que os lleva a esta página: <a
+        href="http://horarios.renfe.es/hir/hjhir110.jsp"><strong>http://horarios.renfe.es/hir/hjhir110.jsp</strong></a>
+    [3]<br>
+    <br>
+    Viendo el código fuente, se ve que el link de cada estación es del tipo:&nbsp; &lt;a
+    href="javascript:hir2("<strong>XXXXX</strong>")" class="entrar"&gt;, donde <strong>XXXXX </strong>es el código de 5
+    caracteres de la estación. Hay estaciones con códigos numéricos y otras con letras. <br>
+    <br>
+    Si se quiere hacer siempre la misma búsqueda, pues se anota el código y se usa en la dirección [2]. Si en cambio se
+    quiere hacer un buscador completo de todas las estaciones, hay que tener una base de datos (o un fichero, como en
+    mis aplicaciones) con la correspondencia entre <strong>nombre de estación</strong> y <strong>código</strong>.&nbsp;
+    Para extraer todos los códigos de ese html usad la herramienta que más os convenga, en mi caso he utilizado <a
+        href="http://vim.org"><strong>Vim</strong></a> y expresiones regulares para ir limpiando el fichero y quedándome
+    solamente con el listado de estaciones. Algo como este fichero: <a
+        href="http://feiss.be/data/-1/codigosrenfe.txt">CodigosRenfe.txt</a>&nbsp; (no está actualizado)<br>
+    <br>
+    Luego está el tema de coger los resultados de los horarios, y mostrarlos de una manera determinada. En el caso de la
+    webApp, se ven así:<br>
+    <br>
+    <a href="http://feiss.be/data/-1/renfeipod11.jpg"><img src="http://feiss.be/data/-1/renfeipod11.jpg" width="168"
+            height="229" /></a><br>
+    <br>
+    Para ello simplemente hay que parsear el html a pelo, no hay otra alternativa. El mecanismo de parsing que se
+    utilice es a gustos de cada uno. En el caso de la webApp, es mediante <strong>expresiones regulares</strong> en
+    <strong>PHP</strong> (<a href="http://feiss.be/data/-1/askrenfe.txt">ver ejemplo de script</a>), y en el caso de la
+    aplicación <strong>Trenes</strong>, es un objeto <a
+        href="http://developer.apple.com/documentation/Cocoa/Reference/Foundation/Classes/NSScanner_Class/Reference/Reference.html">NSScanner</a>
+    el que se encarga del parseado.<br>
+    <br>
+    La clara desventaja de esta forma de conseguir los resultados es que es <strong>totalmente </strong>dependiente del
+    formato del html. Renfe no dispone (que yo sepa) de una API pública para poder realizar consultas en su sistema, así
+    que esta es la única manera que conozco de hacerlo. <strong>Altamente ineficaz, imprevisible y con muy baja
+        tolerancia a fallos</strong>. <br>
+    <br>
+    Como decimos en Gallego: "<strong>Eche o que hai</strong>"<br>
+    <br>
+
+</div><br>

@@ -1,0 +1,26 @@
+<h2>AverageMaskToProperty v1.0 for After Effects</h2>
+<div class="postdate" time="1189747484"></div>
+<div>Making effects for real image footage in After Effects (CS3) very often requires the creation of masks for
+    showing/hiding parts of the image, and usually you have to rotoscopy that mask to fit it with the footage.<br>
+    <br>
+    This is not possible with CS3 and arbitrary masks (and you have to do it by hand), but thanks to the <a
+        href="http://www.aenhancers.com/viewtopic.php?t=329" target="_blank">Rototracking palette</a> from
+    <strong>Alejandro Pérez</strong> and friends this can be made in some few and easy steps.<br>
+    <br>
+    With some specific effect, after doing this, I wanted to put an effect with the origin in the center of the mask. I
+    don"t know if this can be done in an easier way, maybe using expressions, but well, it was a perfect opportunity to
+    learn scripting in AE.<br>
+    <br>
+    <strong>AverageMaskToProperty</strong> is the result. You first select a mask, then an arbitrary 2-dimensional
+    Property (a point, a vertex..), and run the script (<i>File/Scripts</i>). You can choose whether to apply to the
+    current frame or to all frames from current to end.<br>
+    <br>
+    The script calculates the average of the mask vertices and applies the result to the selected property.<br>
+    <br>
+    I don"t know if you understood anything, but it worked great for me :D<br>
+    <br>
+    <a href="*ROOT*/data/-1/AverageMaskToProperty.jsx"
+        target="_blank"><strong>AverageMaskToProperty.jsx</strong></a><br>
+    <br>
+
+</div><br>

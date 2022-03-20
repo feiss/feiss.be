@@ -1,0 +1,38 @@
+function askRenfe($url)
+{
+	$ch = curl_init($url); 
+	curl_setopt($ch, CURLOPT_HEADER, 0);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	$pagina= curl_exec($ch);
+	curl_close($ch);
+
+	$bodypos= stristr($pagina, "</head>");
+	$rawbody= strip_tags(stristr($pagina, $bodypos));
+	$rawbody= stristr($rawbody, "DISCAPACITADOS");
+	$rawbody= substr($rawbody, strlen("DISCAPACITADOS"));
+	$endpos= strpos($rawbody, "Los precios");
+	$rawbody= substr($rawbody, 0, $endpos);
+
+	$lines= explode("reservar", $rawbody);
+
+
+	$timetable= array();
+	foreach ($lines as $line)
+	{
+		if (trim($line)=="") continue;
+
+		if (!preg_match("/(\d\d\d\d\d)\s+([\w-]+)\s+(\d\d:\d\d)(\d\d:\d\d)\s+([DIAROLMXJVS]+)\s+del\s+(\d\d-\d\d-\d\d\d\d)\s+al\s+(\d\d-\d\d-\d\d\d\d)\s+Turista([\d\.]+)/", $line, $fields))
+			preg_match("/(\d\d\d\d\d)\s+([\w-]+)\s+(\d\d:\d\d)(\d\d:\d\d)\s+(\d\d-\d\d-\d\d\d\d)[\w\(\)\s]+Turista([\d\.]+)/", $line, $fields);
+		unset($fields[0]);
+		if (count($fields)==6){
+			$euros= $fields[6];
+			$fields[7]= "";
+			$fields[6]= "";
+			$fields[8]= $euros;
+		}
+
+		$timetable[]= @array_combine(array("code","type","start","end","frecuency","from","to","price"), $fields);
+	}	
+	
+	return $timetable;
+}

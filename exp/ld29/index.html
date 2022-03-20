@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>Beneath the Cave</title>
+	<link href="http://fonts.googleapis.com/css?family=Reenie+Beanie|Satisfy" rel="stylesheet" type="text/css">
+	<script type="text/javascript" src="phaser.min.js"></script>
+	<script type="text/javascript" src="game.js"></script>
+	<style>
+		body,
+		html {
+			margin: 0;
+			background: #000;
+		}
+
+		#game,
+		#actual-canvas {
+			width: 800px;
+			height: 300px;
+			margin: 80px auto 0px auto;
+			background: #222;
+		}
+
+		#game {
+			display: none;
+		}
+
+		#credits,
+		#help {
+			font: 11px helvetica, arial, sans-serif;
+			color: #333;
+			width: 500px;
+			margin: 100px auto 0px auto;
+			text-align: center;
+		}
+
+		#help {
+			margin: 50px auto;
+		}
+
+		#credits a {
+			color: #444;
+			text-decoration: none;
+		}
+
+		#credits a:hover {
+			color: #777;
+		}
+
+		img {
+			display: none;
+		}
+	</style>
+</head>
+
+<body onload="rungame()">
+	<div id="actual-canvas"><canvas id="pixel" width="800" height="300" /></div>
+	<div id="game"></div>
+
+	<div id="help"> <strong>Cursor keys, hold X</strong> to talk</div>
+	<div id="credits"> A "game" done in 6 hours by <a href="http://feiss.be">Diego F. Goberna</a> for <a
+			href="http://ludumdare.com" target="_blank">Ludum Dare #29</a>. (<a
+			href="http://www.ludumdare.com/compo/ludum-dare-29/?action=preview&uid=8733">view entry</a>)</div>
+
+	<img src="sshot.jpg" alt="Beneath the Cave">
+
+	<script>
+		var _gaq = [["_setAccount", "UA-5753152-1"], ["_trackPageview"]];
+		(function (d, t) {
+			var g = d.createElement(t),
+				s = d.getElementsByTagName(t)[0];
+			g.src = "//www.google-analytics.com/ga.js";
+			s.parentNode.insertBefore(g, s);
+		}(document, "script"));
+	</script>
+
+
+</body>
+
+</html>

@@ -1,0 +1,33 @@
+<h2>Photoshop asset generator: How to remove default subfolder when generating image assets</h2>
+<div class="postdate" time="1546449217"></div>
+<p>
+
+    Go to folder:
+
+<p style="text-align:left;font: 12px monospace; margin:1em 0">[Photoshop
+    Folder]\Required\Plug-ins\Generator\assets.generate\lib</p>
+
+We need to edit file <span style="text-align:left;font: 12px monospace;">filemanager.js</span>. Probably you won"t have
+write
+permission to do it, so in Windows right click on it, select <strong>Properties</strong>, go to the
+<strong>Security</strong> tab, click on <b>Edit...</b>, select "Users" and turn on the checkbox under "Allow" and
+"Write". Click Ok and edit file (if you are on macOS you have permission settings on <span
+    style="text-align:left;font: 12px monospace;">cmd+i</span>)
+
+</p>
+<p>
+    go to line 273, where it says:
+
+<p style="text-align:left;font: 12px monospace; margin:1em 0">basePath = path.resolve(documentDirectory, documentName +
+    "-assets");
+</p>
+
+and replace it for:
+<p style="text-align:left;font: 12px monospace; margin:1em 0">basePath = path.resolve(documentDirectory);
+</p>
+
+Done. From now on, assets will be saved in the same folder as the PSD.
+
+
+
+</p>

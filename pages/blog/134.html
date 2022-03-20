@@ -1,0 +1,88 @@
+<h2>4-sided two player pong game in 1024Bytes</h2>
+<div class="postdate" time="1280885940"></div>
+<div><a href="http://js1k.qfox.nl">js1k </a>is a new contest in which participants have to do something in Javascript in
+    no more than 1024 Bytes.&nbsp;<div><br>
+    </div>
+    <div>I could not resist and took the bait, so&nbsp;I"ve done a 2-sided two player pong game, that you play clicking
+        on the image:</div>
+    <div><br>
+    </div>
+    <div><a href="http://js1k.qfox.nl/demo/20"><img src="http://feiss.be/data/-1/pongjs1k.jpg" width="256"
+                height="270" /></a><br>
+    </div>
+    <div><br>
+    </div>
+    <div><br>
+    </div>
+    <div>Don"t forget to check out the <a href="http://js1k.qfox.nl/submissions">rest of participants</a>, great stuff!
+        :)</div>
+    <div><br>
+    </div>
+    <div>The most difficult thing was to put all the code, that initially was 2029 Bytes, to 1024 Bytes. It ended preety
+        obfuscated:</div>
+    <div><br>
+    </div>
+    <div class="javascript"
+        style="font-family:monospace;color: #ccc; background-color: rgba(0,0,0,0.1);font-size:10px;line-height:10px;padding:9px">
+        var d=document;<br>
+        var C=d.getElementById("c");<br>
+        d.onkeydown=kd;<br>
+        d.onkeyup=ku;<br>
+        d.onmousemove=mm;<br>
+        var K=[], M=Math, w=500, h=w, c= C.getContext("2d"), <br>
+        t, V=0, a, H=h, O, P, A, B, J=["#8cf","#c8f"], li, v=20, z=100, G=v, E=0, r=120, n=50; <br>
+        C.width=w;C.height=600;<br>
+        Z(0);<br>
+        window.setInterval(l, 26);<br>
+        function Z(q)<br>
+        {<br>
+        &nbsp; &nbsp; E+=q;<br>
+        &nbsp; &nbsp; O=P=250;<br>
+        &nbsp; &nbsp; a= M.random()*2*M.PI;<br>
+        &nbsp; &nbsp; A=M.cos(a)*5;<br>
+        &nbsp; &nbsp; B=M.sin(a)*5;<br>
+        &nbsp; &nbsp; l();<br>
+        &nbsp; &nbsp; t=30;<br>
+        }<br>
+        function l()<br>
+        {<br>
+        &nbsp; &nbsp; if(t&lt;=0){<br>
+        &nbsp; &nbsp; c.globalAlpha=0.4;<br>
+        &nbsp; &nbsp; f(0,0,w,600,"#fff");<br>
+        &nbsp; &nbsp; f(v,v,w-40,h-40,"#ddd");<br>
+        &nbsp; &nbsp; c.globalAlpha=1;<br>
+        &nbsp; &nbsp; f(250,h+v,E,5,J[E&gt;0?1:0]);<br>
+        &nbsp; &nbsp; <br>
+        &nbsp; &nbsp; if (K[65]) V-=3;<br>
+        &nbsp; &nbsp; if (K[90]) V+=3;<br>
+        &nbsp; &nbsp; V= V&lt;-v?-v:V&gt;v?v:V;<br>
+        &nbsp; &nbsp; G+= V;<br>
+        &nbsp; &nbsp; if(G&lt;v){ G=v; V=0;}<br>
+        &nbsp; &nbsp; if(G&gt;h-r){ G=h-r; V=0;}<br>
+        &nbsp; &nbsp; V*=0.8;<br>
+        &nbsp; &nbsp; f(0,G,v,z,J[0]);<br>
+        &nbsp; &nbsp; f(G,0,z,v,J[0]);<br>
+        &nbsp; &nbsp; <br>
+        &nbsp; &nbsp; <br>
+        &nbsp; &nbsp; H= H&lt;v?v:H&gt;h-r?h-r:H;<br>
+        &nbsp; &nbsp; f(w-v,H,v,z,J[1]);<br>
+        &nbsp; &nbsp; f(H,h-v,z,v,J[1]);<br>
+        <br>
+        &nbsp; &nbsp; O+= A;<br>
+        &nbsp; &nbsp; P+= B;<br>
+        &nbsp; &nbsp; if (O&lt;v || P&lt;v) Z(v);<br>
+        &nbsp; &nbsp; if (O&gt;w-v || P&gt;h-v) Z(-v);<br>
+        &nbsp; &nbsp; if ((O&lt;30 &amp;&amp; M.abs(P-(G+n))&lt;n) || (O&gt;w-30 &amp;&amp; M.abs(P-(H+n))&lt;n))
+        A*=-1-M.random()*0.2;<br>
+        &nbsp; &nbsp; if ((P&lt;30 &amp;&amp; M.abs(O-(G+n))&lt;n) || (P&gt;h-30 &amp;&amp; M.abs(O-(H+n))&lt;n))
+        B*=-1-M.random()*0.2;<br>
+        &nbsp; &nbsp; <br>
+        &nbsp; &nbsp; f(O-10,P-10,v,v,"#999")<br>
+        &nbsp; &nbsp; }t--;<br>
+        }<br>
+        function f(y,u,i,o,x){c.fillStyle=x;c.fillRect(y,u,i,o);}<br>
+        function kd(e){K[e.keyCode]=1;}<br>
+        function ku(e){K[e.keyCode]=0;}<br>
+        function mm(e){H=e.pageY-40;}
+    </div>
+</div><br>

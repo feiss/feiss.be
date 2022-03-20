@@ -1,0 +1,43 @@
+<h2>Instancing externally loaded classes in AS3</h2>
+<div class="postdate" time="1253557200"></div>
+<div>This one is for <a href="http://adobe.com/flash">Flash </a>coders.<br>
+    <br>
+    I have <strong>assets.fla</strong>, where the artist puts all the game clips (characters, items, etc.), that I load
+    from the main game class with a <strong>Loader </strong>object. Then, I need to instance each asset into the game
+    (for example, to put a new enemy on stage). <br>
+    <br>
+    The problem is that in <strong>AS3 </strong>you don"t have <strong>duplicateMovieClip()</strong> method, and besides
+    this, I don"t want to have the clips inside the Loader overloading the final movie. In other words, I want this:<br>
+    <br>
+    <blockquote><code><strong>var </strong>loader:Loader= <strong>new </strong>Loader();<br>
+loader.load(<strong>new </strong>URLRequest("assets.swf"));<br>
+...<br>
+<strong>var </strong>enemy:EnemyRobot= <strong>new </strong>EnemyRobot(); <br>
+</code></blockquote><br>
+    (<strong>EnemyRobot </strong>is the exported class name of a movieclip in assets.fla)<br>
+    <br>
+    ..But you cannot do this, because EnemyRobot is not a class Flash recognizes in compile time, it does not even exist
+    until the loader completes the loading.<br>
+    <br>
+    <strong>Solution:</strong><br>
+    <br>
+    <div class="code"><strong>var </strong>url:URLRequest= <strong>new </strong>URLRequest("assets.swf");<p></p>
+        <strong>var </strong>context:LoaderContext = <strong>new </strong>LoaderContext();<p></p>
+        context.applicationDomain= ApplicationDomain.currentDomain;<br>
+        <strong>var </strong>loader:Loader= <strong>new </strong>Loader();<br>
+        <p></p>loader.load(url, context);<br>
+        <br>
+        //on loader complete:<br>
+        <br>
+        <strong>while</strong>(MovieClip(loader.content).numChildren) MovieClip(loader.content).removeChildAt(0);<br>
+        <br>
+        <strong>var </strong>EnemyRobot:Class;<br>
+        EnemyRobot= assetsLoader.contentLoaderInfo.applicationDomain.getDefinition("EnemyRobot") <strong>as
+        </strong>Class;<br>
+        <strong>var </strong>enemy:MovieClip= <strong>new EnemyRobot</strong>() <strong>as </strong>MovieClip;
+        /*EnemyRobot is not recognized as a class in compile time, so we use "MovieClip" (--EnemyRobot is a simply
+        extension of a MovieClip) */<br>
+    </div><br>
+    That"s all.<br>
+
+</div><br>

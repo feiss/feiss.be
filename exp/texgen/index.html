@@ -1,0 +1,406 @@
+<!--
+  texgen library: mrdoob  http://mrdoob.com
+  texgen editor(this file):  feiss   http://feiss.be
+-->
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<title>TexGen</title>
+	<script src="sortable.min.js"></script>
+	<script src="texgen.js"></script>
+
+	<style>
+		body,
+		html {
+			width: 100%;
+			height: 100%;
+			overflow: hidden;
+		}
+
+		body {
+			background: #1C1C1C;
+			font: 14px sans-serif;
+			color: #555556;
+		}
+
+		a {
+			color: #69696B;
+		}
+
+		strong {
+			font-weight: normal;
+			color: #757577;
+		}
+
+		input,
+		button {
+			font: 14px sans-serif;
+			background: #666;
+			border: 1px solid #444;
+			border-bottom: 1px solid #777;
+			outline: none;
+			text-align: center;
+		}
+
+		input {
+			cursor: move;
+			cursor: ew-resize;
+		}
+
+		button {
+			border: 1px solid #444;
+			border-top: 1px solid #777;
+		}
+
+		input[type="color"] {
+			padding: 0;
+		}
+
+		button:active {
+			background: #777;
+			border: 1px solid #333;
+			border-bottom: 1px solid #999;
+		}
+
+		#all {
+			margin: 10px;
+			background: #1C1C1C;
+		}
+
+		canvas {
+			background: #333334;
+			float: left;
+		}
+
+		#controls,
+		#params {
+			margin-left: 20px;
+			color: #666;
+			float: left;
+		}
+
+		#controls ul {
+			list-style: none;
+			padding: 0;
+			color: #ccc;
+		}
+
+		#controls li {
+			background: #555;
+			padding: 3px;
+			border: 1px solid #333;
+			border-top: 1px solid #666;
+			cursor: pointer;
+			width: 400px;
+			clear: both;
+		}
+
+		/*#controls li:hover{
+	background: #595959;
+}
+#controls li:active{
+	background: #666;
+}
+*/
+		#actions button {
+			padding: 5px 15px;
+			float: left;
+			margin-right: 10px;
+			font-size: 16px;
+		}
+
+		#params h1 {
+			font-weight: normal;
+			font-size: 16px;
+			margin: 0;
+			margin-bottom: 10px;
+			color: #999;
+		}
+
+		#params label {
+			display: block;
+			height: 20px;
+		}
+
+		#params label span {
+			display: block;
+			width: 100px;
+			float: left;
+		}
+
+		.removebut {
+			display: block;
+			width: 20px;
+			text-align: center;
+			float: right;
+			text-decoration: none;
+			color: #aaa;
+			font-size: 20px;
+		}
+
+		.removebut:hover {
+			color: red;
+		}
+
+		.w20 {
+			width: 20px;
+			height: 20px;
+			display: block;
+			float: left;
+			margin-right: 10px;
+			margin-top: 2px;
+			color: #ccc;
+		}
+
+		.w50 {
+			width: 50px;
+			display: block;
+			float: left;
+			margin-right: 10px;
+			margin-top: 6px;
+		}
+
+		header {
+			margin: 1em 0;
+			font-size: 11px;
+		}
+
+		.eyetoggle {
+			background-image: url("visible.png");
+			background-position: -1px 20px;
+		}
+	</style>
+
+	<script>
+
+		var ops = {};
+		var counter = 0;
+
+		function render() {
+			var c = document.getElementById("c");
+			var w = parseInt(document.getElementById("width").value);
+			var h = parseInt(document.getElementById("height").value);
+			w = w == 0 ? 256 : w;
+			h = h == 0 ? 256 : h;
+			c.width = w;
+			c.height = h;
+			var ctx = c.getContext("2d");
+
+			var texture = new TG.Texture(w, h);
+
+			var arr = sortable.toArray();
+
+			for (var i = 0; i < arr.length; i++) {
+				var op = ops[arr[i]];
+				if (!op.visible) continue;
+				var layer;
+				var r = op.color.r * op.alpha;
+				g = op.color.g * op.alpha;
+				b = op.color.b * op.alpha;
+				switch (op.type) {
+					case "XOR": layer = new TG.XOR().color(r, g, b); break;
+					case "OR": layer = new TG.OR().color(r, g, b); break;
+					case "SinX": layer = new TG.SinX().frequency(op.p1).color(r, g, b); break;
+					case "SinY": layer = new TG.SinY().frequency(op.p1).color(r, g, b); break;
+					case "Noise": layer = new TG.Noise().color(r, g, b); break;
+				}
+				switch (op.compmode) {
+					case "+": texture.add(layer); break;
+					case "-": texture.sub(layer); break;
+					case "x": texture.mul(layer); break;
+					case "/": texture.div(layer); break;
+				}
+			}
+
+			ctx.putImageData(texture.toImageData(ctx), 0, 0);
+		}
+
+		function changeCompMode(but, id) {
+			var op = but.innerHTML;
+			if (op == "+") op = "-";
+			else if (op == "-") op = "x";
+			else if (op == "x") op = "/";
+			else if (op == "/") op = "+";
+			but.innerHTML = op;
+			ops[id].compmode = op;
+			render();
+		}
+
+		function setParamColor(c, id) {
+			ops[id].color = hexToRgb(c.value);
+			render();
+		}
+
+		function setParamNum(c, id) {
+			ops[id].p1 = parseFloat(c.value);
+			render();
+		}
+		function setAlpha(c, id) {
+			ops[id].alpha = parseFloat(c.value);
+			render();
+		}
+
+		function getParams(op, id, col, p1) {
+			console.log(col);
+			switch (op) {
+				case "Noise": case "XOR": case "OR": return "<input type="color" onchange="setParamColor(this, \"" + id + "\")" value = "" + col + "" > ";
+		case "SinX": case "SinY": return "Freq: <input value=""+p1+"" onchange="setParamNum(this, \"" + id + "\" )" size = "5" > <input type="color" onchange="setParamColor(this,\""+id+"\")"  value = "" + col + "" > ";
+
+	}
+		}
+
+		function removeLayer(dom, id) {
+			dom.parentNode.removeChild(dom);
+			delete ops[id];
+		}
+
+		function toggleVisible(dom, id) {
+			dom.style.backgroundPosition = ops[id].visible ? "-1px 0px" : "-1px 20px";
+			ops[id].visible = !ops[id].visible;
+			render();
+		}
+
+		function add(op) {
+			var r = Math.random(),
+				g = Math.random(),
+				b = Math.random();
+
+			var p1 = Math.floor(Math.random() * 10) / 1000.0;
+
+			var l = document.getElementById("list");
+			var li = document.createElement("li");
+			li.id = "op" + counter;
+			li.setAttribute("data-id", li.id);
+			li.innerHTML = "<button class="w20 eyetoggle" onclick="toggleVisible(this, \"" + (li.id) + "\")" ></button > "+
+		"<button class="w20" onclick="changeCompMode(this, \"" + (li.id) + "\")" > +</button > "
+				+ "<span class="w50">" + op + "</span>"
+				+ getParams(op, li.id, rgbToHex(r, g, b), p1)
+			+ " A: <input value="1.0" onchange="setAlpha(this, \"" + li.id + "\" )" size = "2" > "
+				+ " <a class="removebut" href="#" onclick="removeLayer(this.parentNode, \"" + (li.id) + "\")" >& times;</a > ";
+
+			counter++;
+			l.appendChild(li);
+
+			ops[li.id] = { visible: true, alpha: 1.0, type: op, compmode: "+", p1: p1, color: { r: r, g: g, b: b } };
+			render();
+		}
+
+		//http://stackoverflow.com/questions/5623838/rgb-to-hex-and-hex-to-rgb
+		function hexToRgb(hex) {
+			var result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+			return result ? {
+				r: parseInt(result[1], 16) / 255.0,
+				g: parseInt(result[2], 16) / 255.0,
+				b: parseInt(result[3], 16) / 255.0
+			} : null;
+		}
+		function componentToHex(c) {
+			var hex = parseInt(c * 255).toString(16);
+			return hex.length == 1 ? "0" + hex : hex;
+		}
+		function rgbToHex(r, g, b) {
+			return "#" + componentToHex(r) + componentToHex(g) + componentToHex(b);
+		}
+
+
+		function cls() {
+			document.getElementById("list").innerHTML = "";
+			ops = {};
+			render();
+		}
+
+		var dragging = null;
+		var startdrag, startdragvalue;
+		var dragfactor = 1;
+
+		function setup() {
+			document.addEventListener("mousedown", function (ev) {
+				if (ev.target.tagName == "INPUT") {
+					dragging = ev.target;
+					startdrag = ev.x;
+					startdragvalue = parseFloat(dragging.value);
+					if (startdragvalue >= 10) dragfactor = 0.1;
+					else if (startdragvalue >= 1) dragfactor = 1.0;
+					else if (startdragvalue >= 0.1) dragfactor = 10.0;
+					else if (startdragvalue >= 0.01) dragfactor = 100.0;
+					else if (startdragvalue >= 0.001) dragfactor = 1000.0;
+					else dragfactor = 10000.0;
+
+					if (dragging.size == "2") //alpha
+						dragfactor = 100.0;
+				}
+			});
+			document.addEventListener("mouseup", function (ev) {
+				dragging = null;
+			});
+			document.addEventListener("mousemove", function (ev) {
+				if (!dragging) return;
+				dragging.value = Math.max(0, Math.floor((startdragvalue + (ev.x - startdrag) / dragfactor) * 1000) / 1000.0);
+				if (dragging.id == "width" || dragging.id == "height") render();
+				else if (dragging.size == "2") {
+					dragging.value = Math.min(1, parseFloat(dragging.value));
+					setAlpha(dragging, dragging.parentNode.id);
+				}
+				else setParamNum(dragging, dragging.parentNode.id);
+			});
+			sortable = Sortable.create(document.getElementById("list"), {
+				onUpdate: function (ev) {
+					render();
+				}
+			});
+
+		}
+
+	</script>
+
+</head>
+
+<body onload="setup()">
+	<div id="all">
+		<header><strong>TexGen Editor</strong> - <a href="https://github.com/mrdoob/texgen.js">texgen</a> by <a
+				href="http://mrdoob.com">mrdoob</a>, this editor by <a href="http://feiss.be">feiss</a></header>
+		<div id="preview">
+			<canvas id="c"></canvas>
+		</div>
+		<div id="controls">
+			<div id="global">
+				<input type="text" size="3" placeholder="W" value="256" id="width"> x
+				<input type="text" size="3" placeholder="H" value="256" id="height">
+				&nbsp;&nbsp;<button onclick="cls()">Clear</button>
+
+			</div>
+			<br>
+			<button onclick="add(" XOR")">XOR</button>
+			<button onclick="add(" OR")">OR</button>
+			<button onclick="add(" SinX")">SinX</button>
+			<button onclick="add(" SinY")">SinY</button>
+			<button onclick="add(" Noise")">Noise</button>
+
+			<ul id="list">
+			</ul>
+			<div id="actions">
+			</div>
+		</div>
+
+
+
+	</div>
+
+
+	<script>
+		var _gaq = [["_setAccount", "UA-5753152-1"], ["_trackPageview"]];
+		(function (d, t) {
+			var g = d.createElement(t),
+				s = d.getElementsByTagName(t)[0];
+			g.src = "//www.google-analytics.com/ga.js";
+			s.parentNode.insertBefore(g, s);
+		}(document, "script"));
+	</script>
+
+</body>
+
+</html>

@@ -1,0 +1,57 @@
+<h2>Importing posts from Blogspot/Blogger</h2>
+<div class="postdate" time="1237581813"></div>
+<div>These weeks i"m working on a friend"s webpage, with an embbebed <strong>blog</strong>. He already has a blog at <a
+        href="http://blogger.com" target="_blank">blogspot.com</a> since some time ago, so told me that could be nice to
+    preserve all blogspot posts in the new blog.<br>
+    <br>
+    The fact is that the new blog system is done by me, database structure included, so since <strong>there"s no
+        converters</strong> from blogger/blogspot to another format (another but <a href="http://wordpress.org/"
+        target="_blank">Wordpress</a>, which doesn"t help) I have to dive into the <strong>xml </strong>code from
+    blogger export, use some <strong>.php</strong>, and call it a day!<br>
+    <br>
+    Information for curious specimens (and <strong>php </strong>coders):<br>
+    <br>
+    <span style="font-size:1.5em">1.</span> <b>Export blog:</b> <br>
+    From blogger"s blog configuration, at <b>Basic</b> Tab, click on <b>Export Blog</b> and save the .xml file.<br>
+    <br>
+    <span style="font-size:1.5em">2.</span> <b>Remove namespaces</b>: <br>
+    Open the <strong>.xml</strong> file in a good text editor (?Vim, Emacs, TextMate, TextPad...) and remove all
+    <strong>thr:</strong> namespaces (search/replace the string "thr:" by nothing). <br>
+    <br>
+    <span style="font-size:1.5em">3.</span> <strong>Chop the pork:</strong><br>
+    Then locate the first <strong>&lt;entry&gt;</strong> node whose <strong>&lt;id&gt;</strong> node has the string
+    <strong>"post"</strong>, not the string <strong>"settings"</strong><br>
+    <br>
+    <i>Example: &lt;id&gt;tag:blogger.com,1999:blog-18947300<strong>.post</strong>-113812357977462718&lt;/id&gt;</i><br>
+    <br>
+    You can do it by searching the string "&lt;entry" and then search for the string ".post".<br>
+    <br>
+    Once you located this first &lt;entry&gt; node that is a post, <strong>remove </strong>all text before it.<br>
+    <br>
+    <span style="font-size:1.5em">4.</span> <b>Save the file</b> (with another name better, isn"t it?)<br>
+    <br>
+    <span style="font-size:1.5em">5.</span> <strong>Run <a href="*ROOT*/data/-1/import_blogger.zip "
+            target="_blank">import_blogger.php</a></strong> from your server, with the file in the same directory.<br>
+    Change <b>$file</b> variable to point at your new xml file first. When you access to this php it will retrieve you a
+    file called <b>posts_blogger.sql</b>, with the statements required to feed your sql database. You can easily change
+    the schema by editing the .php, lines 20 to 30.<br>
+    <br>
+    <br>
+    <strong>Note:</strong> this procedure only retrieves post <strong>title</strong>, <strong>date </strong>and
+    <strong>text</strong>, and no comments (they were dispensable for the new blog).<br>
+    <b>Note2:</b> This probably doesn"t work for you, but at least it worked for me :P <strong>If I can help
+        you</strong> with this, drop me a line.<br>
+    <br>
+    ---<br>
+    <br>
+    Now some of you will say there was another better, faster, easier and cleaner way to do it... and then you will ask
+    me why I didn"t ask you before or did this or that, and I will simply respond: <br>
+    <br>
+    <b>This<br>
+        <br>
+        <span style="font-size:1.3em">is</span><br>
+        <br>
+        <span style="font-size:1.4em">sparTAAAA!!!</span></b><br>
+    <br>
+
+</div><br>
