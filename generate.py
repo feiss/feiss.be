@@ -61,7 +61,6 @@ def generate_section(section):
     file.close()
 
 
-generate("pages/404.tpl.html", "404.html", "404")
 generate_section("movies")
 generate_section("games")
 generate_section("misc")
