@@ -30,11 +30,10 @@
 			<a href="*ROOT*/movies.html">Movies</a>&nbsp;&nbsp;&#8725;&nbsp;
 			<a href="*ROOT*/games.html">Games</a>&nbsp;&nbsp;&#8725;&nbsp;
 			<a href="*ROOT*/misc.html">Miscellanea</a>&nbsp;&nbsp;&#8725;&nbsp;
-			<a href="*ROOT*/blog.html">Blog</a>&nbsp;&nbsp;&#8725;&nbsp;
 			<a href="*ROOT*/aboutme.html">About me</a>
 		</nav>
 		<script>
-			["movies", "games", "misc", "blog", "aboutme"].forEach((sec, i) => {
+			["movies", "games", "misc", "aboutme"].forEach((sec, i) => {
 				if (location.pathname.search(sec) !== -1) {
 					document.querySelectorAll(".all nav a")[i + 1].classList.add("on");
 				}

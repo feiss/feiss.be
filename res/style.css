@@ -158,7 +158,7 @@ nav a, nav a:visited{
 	color: #b6813c;
 	border-bottom: none;
 	margin: 0px 0px;
-/*	-webkit-transition: none;
+	/*	-webkit-transition: none;
 	-moz-transition: none;
 	-o-transition: none;
 	transition: none;*/
@@ -175,6 +175,10 @@ nav a:hover, nav a.on:hover, nav a:active, nav a.on:active{
 	margin-left: 5px;*/
 }
 
+nav>a{
+	font-size: 120%;
+
+}
 
 nav a.on{
 	text-decoration: none;

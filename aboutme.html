@@ -30,11 +30,10 @@
 			<a href="./movies.html">Movies</a>&nbsp;&nbsp;&#8725;&nbsp;
 			<a href="./games.html">Games</a>&nbsp;&nbsp;&#8725;&nbsp;
 			<a href="./misc.html">Miscellanea</a>&nbsp;&nbsp;&#8725;&nbsp;
-			<a href="./blog.html">Blog</a>&nbsp;&nbsp;&#8725;&nbsp;
 			<a href="./aboutme.html">About me</a>
 		</nav>
 		<script>
-			["movies", "games", "misc", "blog", "aboutme"].forEach((sec, i) => {
+			["movies", "games", "misc", "aboutme"].forEach((sec, i) => {
 				if (location.pathname.search(sec) !== -1) {
 					document.querySelectorAll(".all nav a")[i + 1].classList.add("on");
 				}
@@ -44,19 +43,24 @@
   <h2>Hola!</h2>
   <br>
 
-  <img src="./data/other/me.jpg" width="112" height="155" style=" margin-right:20px;float:left;">
+  <img src="./data/other/me.jpg" width="130" height="170" style=" margin-right:20px;float:left;">
   <div>
-    I love creating 2d or 3d images, animations, and programming all kinds of stuff, specially graphics.
-    I worked in animation films and visual effects since 2004, and now I"m more focused in realtime graphics and Virtual
-    Reality.
-  </div>
-  <br>
-  Here you can see some of my previous works. I hope you enjoy the visit, and have a nice day!
-  <p style="text-align:right">Greetings,<br>Diego</p>
 
-  <br>
-  E-Mail me to:  <strong>diego -at- feiss.be</strong><br>
-  <br>
+    <p style="text-align:left">
+      I am a computer engineer and a digital artist with 10 years of experience in the film industry and 4 years in
+      Virtual Reality on the Web. I love demoscene, graphics programming, procedural generation, making content creation
+      tools and games.
+    </p>
+    <p style="text-align:left">
+      This website is quite updated and old. For more recent projects focused in my role as a Technical Artist,
+      I encorage you to visit <a href="http://diegofg.com">diegofg.com</a>.
+    </p>
+    <p style="text-align:right">Hope you have a nice day!<br>Diego
+      <br>
+      <br>
+      <b>diego -at- feiss.be</b>
+    </p>
+  </div>
 </div>
 
 <div class="grid_1"> </div>
