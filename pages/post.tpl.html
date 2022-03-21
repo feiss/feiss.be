@@ -10,29 +10,6 @@
 	}
 ?>
 
-	<form action="/blog/post/<?php echo $postid ?>#ping" method="POST" onsubmit="return checkform(this)">
-		<a href="javascript:;" onclick="share(" f","http://feiss.be/blog/post/<?php echo $postid ?>")"
-			class="fb"></a>&nbsp;<a href="javascript:;" title="Share on Google+" onclick="share("
-			g","http://feiss.be/blog/post/<?php echo $postid ?>")" class="gp"></a>&nbsp;<a href="javascript:;"
-			onclick="share(" t","http://feiss.be/blog/post/<?php echo $postid ?>")" class="twt"></a>
-		<input type="hidden" name="action" value="comment">
-		<input type="hidden" name="as1" value="<?php echo $captchaid;?>">
-		<textarea name="text" placeholder="Write here your comment..." style="height:40px"></textarea><br />
-		<div class="formextra" style="display:none">
-			<input name="author" placeholder="Your name">
-			&nbsp;
-			<input name="contact" style="width:290px;float:right" placeholder="Your website or e-mail (optional)">
-			<br>
-			<br>Write down: &nbsp;&nbsp;<strong>
-				<?php echo $captcha; ?>
-			</strong>&nbsp;&nbsp;<input name="as2" style="width:6em" placeholder="<?php echo strtolower($captcha); ?>">
-			<input type="submit" value="  Send comment  " style="float:right" />
-			<a name="ping"></a>
-			<div class="comments_error">
-				<?php if ($error) echo $error; ?>
-			</div>
-		</div>
-	</form>
 	<p>&nbsp;</p>
 	<p>&nbsp;</p>
 	<p><a href="/blog" class="moreinfo">&larr; Return to blog</a></p>

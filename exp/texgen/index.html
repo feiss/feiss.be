@@ -170,7 +170,7 @@
 		}
 
 		.eyetoggle {
-			background-image: url("visible.png");
+			background-image: url('visible.png');
 			background-position: -1px 20px;
 		}
 	</style>
@@ -181,14 +181,14 @@
 		var counter = 0;
 
 		function render() {
-			var c = document.getElementById("c");
-			var w = parseInt(document.getElementById("width").value);
-			var h = parseInt(document.getElementById("height").value);
+			var c = document.getElementById('c');
+			var w = parseInt(document.getElementById('width').value);
+			var h = parseInt(document.getElementById('height').value);
 			w = w == 0 ? 256 : w;
 			h = h == 0 ? 256 : h;
 			c.width = w;
 			c.height = h;
-			var ctx = c.getContext("2d");
+			var ctx = c.getContext('2d');
 
 			var texture = new TG.Texture(w, h);
 
@@ -202,17 +202,17 @@
 				g = op.color.g * op.alpha;
 				b = op.color.b * op.alpha;
 				switch (op.type) {
-					case "XOR": layer = new TG.XOR().color(r, g, b); break;
-					case "OR": layer = new TG.OR().color(r, g, b); break;
-					case "SinX": layer = new TG.SinX().frequency(op.p1).color(r, g, b); break;
-					case "SinY": layer = new TG.SinY().frequency(op.p1).color(r, g, b); break;
-					case "Noise": layer = new TG.Noise().color(r, g, b); break;
+					case 'XOR': layer = new TG.XOR().color(r, g, b); break;
+					case 'OR': layer = new TG.OR().color(r, g, b); break;
+					case 'SinX': layer = new TG.SinX().frequency(op.p1).color(r, g, b); break;
+					case 'SinY': layer = new TG.SinY().frequency(op.p1).color(r, g, b); break;
+					case 'Noise': layer = new TG.Noise().color(r, g, b); break;
 				}
 				switch (op.compmode) {
-					case "+": texture.add(layer); break;
-					case "-": texture.sub(layer); break;
-					case "x": texture.mul(layer); break;
-					case "/": texture.div(layer); break;
+					case '+': texture.add(layer); break;
+					case '-': texture.sub(layer); break;
+					case 'x': texture.mul(layer); break;
+					case '/': texture.div(layer); break;
 				}
 			}
 
@@ -221,10 +221,10 @@
 
 		function changeCompMode(but, id) {
 			var op = but.innerHTML;
-			if (op == "+") op = "-";
-			else if (op == "-") op = "x";
-			else if (op == "x") op = "/";
-			else if (op == "/") op = "+";
+			if (op == '+') op = '-';
+			else if (op == '-') op = 'x';
+			else if (op == 'x') op = '/';
+			else if (op == '/') op = '+';
 			but.innerHTML = op;
 			ops[id].compmode = op;
 			render();
@@ -247,10 +247,10 @@
 		function getParams(op, id, col, p1) {
 			console.log(col);
 			switch (op) {
-				case "Noise": case "XOR": case "OR": return "<input type="color" onchange="setParamColor(this, \"" + id + "\")" value = "" + col + "" > ";
-		case "SinX": case "SinY": return "Freq: <input value=""+p1+"" onchange="setParamNum(this, \"" + id + "\" )" size = "5" > <input type="color" onchange="setParamColor(this,\""+id+"\")"  value = "" + col + "" > ";
+				case 'Noise': case 'XOR': case 'OR': return '<input type="color" onchange="setParamColor(this,\'' + id + '\')" value="' + col + '">';
+				case 'SinX': case 'SinY': return 'Freq: <input value="' + p1 + '" onchange="setParamNum(this,\'' + id + '\' )" size="5"> <input type="color" onchange="setParamColor(this,\'' + id + '\')"  value="' + col + '">';
 
-	}
+			}
 		}
 
 		function removeLayer(dom, id) {
@@ -259,7 +259,7 @@
 		}
 
 		function toggleVisible(dom, id) {
-			dom.style.backgroundPosition = ops[id].visible ? "-1px 0px" : "-1px 20px";
+			dom.style.backgroundPosition = ops[id].visible ? '-1px 0px' : '-1px 20px';
 			ops[id].visible = !ops[id].visible;
 			render();
 		}
@@ -271,21 +271,21 @@
 
 			var p1 = Math.floor(Math.random() * 10) / 1000.0;
 
-			var l = document.getElementById("list");
-			var li = document.createElement("li");
-			li.id = "op" + counter;
-			li.setAttribute("data-id", li.id);
-			li.innerHTML = "<button class="w20 eyetoggle" onclick="toggleVisible(this, \"" + (li.id) + "\")" ></button > "+
-		"<button class="w20" onclick="changeCompMode(this, \"" + (li.id) + "\")" > +</button > "
-				+ "<span class="w50">" + op + "</span>"
+			var l = document.getElementById('list');
+			var li = document.createElement('li');
+			li.id = 'op' + counter;
+			li.setAttribute('data-id', li.id);
+			li.innerHTML = '<button class="w20 eyetoggle" onclick="toggleVisible(this, \'' + (li.id) + '\')"></button>' +
+				'<button class="w20" onclick="changeCompMode(this, \'' + (li.id) + '\')">+</button> '
+				+ '<span class="w50">' + op + "</span>"
 				+ getParams(op, li.id, rgbToHex(r, g, b), p1)
-			+ " A: <input value="1.0" onchange="setAlpha(this, \"" + li.id + "\" )" size = "2" > "
-				+ " <a class="removebut" href="#" onclick="removeLayer(this.parentNode, \"" + (li.id) + "\")" >& times;</a > ";
+				+ ' A: <input value="1.0" onchange="setAlpha(this,\'' + li.id + '\' )" size="2">'
+				+ ' <a class="removebut" href="#" onclick="removeLayer(this.parentNode, \'' + (li.id) + '\')">&times;</a>';
 
 			counter++;
 			l.appendChild(li);
 
-			ops[li.id] = { visible: true, alpha: 1.0, type: op, compmode: "+", p1: p1, color: { r: r, g: g, b: b } };
+			ops[li.id] = { visible: true, alpha: 1.0, type: op, compmode: '+', p1: p1, color: { r: r, g: g, b: b } };
 			render();
 		}
 
@@ -308,7 +308,7 @@
 
 
 		function cls() {
-			document.getElementById("list").innerHTML = "";
+			document.getElementById('list').innerHTML = '';
 			ops = {};
 			render();
 		}
@@ -319,7 +319,7 @@
 
 		function setup() {
 			document.addEventListener("mousedown", function (ev) {
-				if (ev.target.tagName == "INPUT") {
+				if (ev.target.tagName == 'INPUT') {
 					dragging = ev.target;
 					startdrag = ev.x;
 					startdragvalue = parseFloat(dragging.value);
@@ -330,7 +330,7 @@
 					else if (startdragvalue >= 0.001) dragfactor = 1000.0;
 					else dragfactor = 10000.0;
 
-					if (dragging.size == "2") //alpha
+					if (dragging.size == '2') //alpha
 						dragfactor = 100.0;
 				}
 			});
@@ -340,14 +340,14 @@
 			document.addEventListener("mousemove", function (ev) {
 				if (!dragging) return;
 				dragging.value = Math.max(0, Math.floor((startdragvalue + (ev.x - startdrag) / dragfactor) * 1000) / 1000.0);
-				if (dragging.id == "width" || dragging.id == "height") render();
-				else if (dragging.size == "2") {
+				if (dragging.id == 'width' || dragging.id == 'height') render();
+				else if (dragging.size == '2') {
 					dragging.value = Math.min(1, parseFloat(dragging.value));
 					setAlpha(dragging, dragging.parentNode.id);
 				}
 				else setParamNum(dragging, dragging.parentNode.id);
 			});
-			sortable = Sortable.create(document.getElementById("list"), {
+			sortable = Sortable.create(document.getElementById('list'), {
 				onUpdate: function (ev) {
 					render();
 				}
@@ -374,11 +374,11 @@
 
 			</div>
 			<br>
-			<button onclick="add(" XOR")">XOR</button>
-			<button onclick="add(" OR")">OR</button>
-			<button onclick="add(" SinX")">SinX</button>
-			<button onclick="add(" SinY")">SinY</button>
-			<button onclick="add(" Noise")">Noise</button>
+			<button onclick="add('XOR')">XOR</button>
+			<button onclick="add('OR')">OR</button>
+			<button onclick="add('SinX')">SinX</button>
+			<button onclick="add('SinY')">SinY</button>
+			<button onclick="add('Noise')">Noise</button>
 
 			<ul id="list">
 			</ul>
@@ -392,13 +392,13 @@
 
 
 	<script>
-		var _gaq = [["_setAccount", "UA-5753152-1"], ["_trackPageview"]];
+		var _gaq = [['_setAccount', 'UA-5753152-1'], ['_trackPageview']];
 		(function (d, t) {
 			var g = d.createElement(t),
 				s = d.getElementsByTagName(t)[0];
-			g.src = "//www.google-analytics.com/ga.js";
+			g.src = '//www.google-analytics.com/ga.js';
 			s.parentNode.insertBefore(g, s);
-		}(document, "script"));
+		}(document, 'script'));
 	</script>
 
 </body>
