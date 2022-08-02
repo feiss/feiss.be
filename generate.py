@@ -51,6 +51,8 @@ def generate_section(section):
     projects = Path("pages/"+section+"/order").read_text().split("\n")
     for project in projects:
         if project[0] == "*":
+            generate("pages/"+section+"/" +
+                     project[1:]+".html", project[1:]+".html", section)
             continue
         tpl = Path("pages/"+section+"/"+project+".html").read_text()
         tpl = tpl.replace("*share_icons*", "")

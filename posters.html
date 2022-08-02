@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8" />
+	<title>Diego F. Goberna - Movies</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+	<meta name="description"
+		content="Visual portfolio of Diego F. Goberna, artist and programmer. Movies, games and more" />
+	<meta name="author" content="Diego Fernandez Goberna" />
+
+	<link rel="alternate" type="application/rss+xml" title="Diego F. Goberna - Portfolio and Blog" href="/rss">
+	<link rel="shortcut icon" href="./res/favicon.ico">
+	<link rel="apple-touch-icon" href="./res/iosfavicon57.png" />
+	<link rel="apple-touch-icon" sizes="72x72" href="./res/iosfavicon72.png" />
+	<link rel="apple-touch-icon" sizes="114x114" href="./res/iosfavicon114.png" />
+
+	<link
+		href="http://fonts.googleapis.com/css?family=Source+Sans+Pro:400,600,700,900,400italic,600italic,700italic,900italic"
+		rel="stylesheet" type="text/css">
+
+	<link rel="stylesheet" type="text/css" href="./res/style.css">
+	<script>lazycallback = undefined;</script>
+</head>
+
+<body>
+	<div class="all">
+		<nav>
+			<div class="logo"><a href="./index.html">Diego F. Goberna</a></div>
+			<a href="./movies.html">Movies</a>&nbsp;&nbsp;&#8725;&nbsp;
+			<a href="./games.html">Games</a>&nbsp;&nbsp;&#8725;&nbsp;
+			<a href="./misc.html">Miscellanea</a>&nbsp;&nbsp;&#8725;&nbsp;
+			<a href="./aboutme.html">About me</a>
+		</nav>
+		<script>
+			["movies", "games", "misc", "aboutme"].forEach((sec, i) => {
+				if (location.pathname.search(sec) !== -1) {
+					document.querySelectorAll(".all nav a")[i + 1].classList.add("on");
+				}
+			});
+		</script>
+		<div id="content"><div class="project">
+  <h2>Movie Posters</h2>
+  <h3>Some early promotional posters
+    *share_icons*</h3>
+
+  <div class="grid_6">
+
+    <img loading="lazy" src="./data/posters/poster_maxi_03.jpg" width="1000" height="707">
+    <img loading=" lazy" src="./data/posters/sketch_poster.jpg" width="1000" height="425">
+    <img loading=" lazy" src="./data/posters/snowflake.jpg" width="1000" height="800">
+
+    <div class=" grid_3 alpha">
+      This is a very early poster for <a href="http://youtu.be/415lWhZAwLc" target="_blank">Snowflake</a> (a spanish
+      family movie) done even before the preproduction and the actual design of the gorilla began. On the right,
+      previous sketches and proposals. The face on the bottom was the initial one, but the client prefered a more
+      cartoony and funny grin.
+    </div>
+    <div class="grid_3"></div>
+  </div>
+</div></div><!-- content -->
+<div class="clear">&nbsp;</div>
+<a class="top hidden" href="javascript:;" title="Back to top"></a>
+<div class="footer">All content is Copyright 2022 Diego Fernandez Goberna, unless otherwise stated.</div>
+</div>
+<!-- javascripts -->
+<script type="text/javascript">
+  //$("img.lazy").lazyload({ threshold : 1000, load:function(){lazycallback(this)} });
+  // $(document).ready( function()
+  // {
+  // 	$.waypoints.settings.scrollThrottle = 30;
+  // 	$("#content").waypoint(function(event, direction) {
+  // 		$(".top").toggleClass("hidden", direction === "up");
+  // 	}, { offset:"-50%" });
+
+  //   $("a.top").click(function(){ $("html, body").animate({ scrollTop: 0 }, 600); });
+  //   $(".project").first().addClass("first");
+  //   saveGMT();
+  // });
+  // function saveGMT() {
+  //       var tz= ((new Date()).getTimezoneOffset()/-60);
+  //       var date = new Date();
+  //       date.setTime(date.getTime()+(365*24*60*60*1000));
+  //       var expires = "; expires="+date.toGMTString();
+  //       document.cookie = "clientGMT="+tz+expires+"; path=/";
+  //     }
+  function share(where, url) {
+    var w; switch (where) {
+      case "f": w = window.open("", "sharewin", "height=200,width=500,status=0,location=0,resizable=0,toolbar=0,directories=0,menubar=0,scrollbars=0"); w.document.write("<div style="margin: 30px 100px"><iframe style="border: none" src="http://www.facebook.com/plugins/like.php?href=" + url + "&send=false&layout=standard&width=400&show_faces=true&action=like&colorscheme=light&font=verdana&height=90"></iframe></div>"); break;
+      case "t": w = window.open("https://twitter.com/share?url=" + url, "sharewin", "height=400,width=500,status=0,location=0,resizable=0,toolbar=0,directories=0,menubar=0,scrollbars=0"); break;
+      case "g": w = window.open("", "sharewin", "height=400,width=600,status=0,location=0,resizable=0,toolbar=0,directories=0,menubar=0,scrollbars=0"); var data = "<html><head><script src="https://apis.google.com/js/plusone.js">{lang: "en-GB"}</"; data += "script></head><body style="margin:20px 60px"><div class="g-plus" data-action="share" data-annotation="inline" data-height"24" data-href="" + url + ""></div></body></html>"; w.document.write(data); w.document.write(data); break;
+    }w.moveTo(500, 400);
+  }
+</script>
+<!-- google analytics -->
+<!--  
+<script>
+  var _gaq = [["_setAccount", "UA-5753152-1"], ["_trackPageview"]];
+  (function(d, t) {
+    var g = d.createElement(t),
+        s = d.getElementsByTagName(t)[0];
+    g.src = "//www.google-analytics.com/ga.js";
+    s.parentNode.insertBefore(g, s);
+  }(document, "script"));
+</script> -->
+
+<!-- google analytics -->
+</body>
+
+</html>
