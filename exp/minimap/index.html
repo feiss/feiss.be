@@ -3,14 +3,15 @@
 
 <head>
 	<meta charset="UTF-8">
-	<title>Commented Banner</title>
+	<title>Minimap Banner Generator</title>
 
-	<link href="http://fonts.googleapis.com/css?family=Electrolize" rel="stylesheet" type="text/css">
-
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Electrolize&display=swap" rel="stylesheet">
 	<style>
 		body {
 			margin: 20px;
-			font: 16px verdana;
+			font: 14px sans-serif;
 			line-height: 30px;
 		}
 
@@ -18,11 +19,14 @@
 			padding: 5px 10px;
 			border-radius: 4px;
 			outline: none;
-			border: 1px solid #777;
+			border: none;
 			background: #eee;
 		}
 
-		canvas,
+		canvas {
+			display: none;
+		}
+
 		pre {
 			background: #eee;
 			line-height: 13px;
@@ -33,10 +37,17 @@
 </head>
 
 <body>
+	<h2>Minimap Banner Generator</h2>
 	<p>
-		Banner text:
+		Hi! I'm </I><a href="https://diegofg.com">Diego</a>. This generates a text that you can copy/paste in your code
+		editor and it will look nice in <a
+			href="https://en.wikipedia.org/wiki/Mini-map#Code_minimap_in_text_editors_and_IDEs"
+			target="_blank">minimaps</a>.
+	</p>
+	<p>
+		Text:
 		<input type="text" id="tt" onkeyup="makebanner(this)" value="Hello World!">
-		Symbol: <select id="char" onchange="makebanner()">
+		&nbsp;&nbsp;Symbol: <select id="char" onchange="makebanner()">
 			<option>O</option>
 			<option>#</option>
 			<option>@</option>
@@ -44,10 +55,26 @@
 			<option>*</option>
 		</select>
 	</p>
-	<canvas id="cc" width="200" height="50"></canvas><br>
+	<canvas id="cc" width="200" height="50"></canvas>
 	<pre id="pp"></pre>
+	<p>
+		<button onclick="copy()">Copy to Clipboard</button>
+		&nbsp;<span id="result"></span>
+	</p>
 
 	<script>
+
+		function copy() {
+			var text = document.getElementById("pp").innerText;
+			navigator.clipboard.writeText(text).then(() => {
+				const result = document.getElementById("result");
+				result.innerText = "Copied!"
+				setTimeout(() => {
+					result.innerText = "";
+				}, 1000)
+			}, () => {
+			});
+		}
 		function makebanner() {
 			var tt = document.getElementById("tt");
 			var text = "", origtext = tt.value.toUpperCase();
@@ -80,6 +107,19 @@
 		}
 		makebanner();
 
+	</script>
+
+
+	<!-- google analytics -->
+
+	<script>
+		var _gaq = [['_setAccount', 'UA-5753152-1'], ['_trackPageview']];
+		(function (d, t) {
+			var g = d.createElement(t),
+				s = d.getElementsByTagName(t)[0];
+			g.src = '//www.google-analytics.com/ga.js';
+			s.parentNode.insertBefore(g, s);
+		}(document, 'script'));
 	</script>
 </body>
 
