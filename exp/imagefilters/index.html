@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Image Filters</title>
+    <style>
+        body {
+            font: 14px sans-serif;
+            margin: 2rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        #params div>span {
+            padding-right: 1rem;
+            vertical-align: super;
+        }
+
+        #params div>textarea {
+            display: block;
+            width: 40rem;
+            height: 10rem;
+            background-color: #eee;
+            border: 2px solid white;
+            outline: none;
+            padding: 8px;
+        }
+
+        #params div>textarea.error {
+            border-color: red;
+        }
+
+        #debug {
+            color: red;
+        }
+
+
+        canvas {
+            background-image: url('check.png');
+        }
+    </style>
+</head>
+
+<body ondrop="drop(event)" ondragover="allow_drop(event)">
+    <h2>Image Filters</h2>
+    <p>
+        Hi! I'm </I><a href="https://diegofg.com">Diego</a>. You can drag any image from your computer to this page (it
+        will not be sent to any server).
+        <br>&nbsp;
+    </p>
+    <p>
+        <select id="program" onchange="select_filter(this.value)"></select>
+        <button onclick="save()">Save Image</button>
+    </p>
+    <p id="params"></p>
+    <canvas id="c" width="500" height="500"></canvas>
+
+    <script src="twgl-full.min.js"></script>
+    <script id="vs" type="notjs">
+        attribute vec4 position;
+        void main() {
+          gl_Position = position;
+        }
+    </script>
+
+
+    <script id="fs_normal" type="notjs">
+        precision mediump float;
+        uniform sampler2D image;
+        uniform vec2 resolution;
+
+        void main() {
+            vec2 uv = abs(vec2(0.0, 1.0) - gl_FragCoord.xy / resolution);
+            gl_FragColor= texture2D(image, uv);
+        }
+    </script>
+    <script id="fs_custom" type="notjs">precision mediump float;
+uniform sampler2D image;
+uniform vec2 resolution;
+
+void main() {
+    vec2 uv = abs(vec2(0.0, 1.0) - gl_FragCoord.xy / resolution);
+    vec4 c = texture2D(image, uv);
+    gl_FragColor= c.bgra;
+}
+    </script>
+    <script id="fs_grayscale" type="notjs">
+        precision mediump float;
+        uniform sampler2D image;
+        uniform vec2 resolution;
+        
+        void main() {
+          vec2 uv = abs(vec2(0.0, 1.0) - gl_FragCoord.xy / resolution);
+          vec4 c = texture2D(image, vec2(uv.x, uv.y));
+          float y = 0.299 * c.x + 0.587 * c.y  + 0.114 * c.z;
+          vec4 col = vec4(vec3(y), c.w);
+          gl_FragColor= col;
+        }
+    </script>
+    <script id="fs_noise" type="notjs">
+        precision mediump float;
+        uniform sampler2D image;
+        uniform vec2 resolution;
+        uniform float p0;
+        uniform float p1;
+        
+        vec2 hash2(vec2 p){
+            return fract(sin(vec2(dot(p,vec2(127.1,311.7)),dot(p,vec2(269.5,183.3))))*43758.5453);
+        }
+        
+        void main() {
+          vec2 uv = abs(vec2(0.0, 1.0) - gl_FragCoord.xy / resolution);
+          vec2 amount = vec2(p0/2.0, p1/2.0);
+          vec4 c = texture2D(image, uv + hash2(uv) * amount - amount / 2.0);
+          gl_FragColor= c;
+        }
+    </script>
+
+    <script id="fs_pixelate" type="notjs">
+        precision mediump float;
+        uniform sampler2D image;
+        uniform vec2 resolution;
+        uniform float p0;
+        
+
+        void main() {
+          vec2 uv1 = abs(vec2(0.0, 1.0) - gl_FragCoord.xy / resolution);
+          float amount = max(0.00001, p0/4.0);
+          vec2 uv = ceil(uv1 / amount ) * amount;
+          vec4 c = texture2D(image, uv);
+          gl_FragColor= c;
+        }
+    </script>
+
+
+    <script id="fs_circlecrop" type="notjs">
+        precision mediump float;
+        uniform sampler2D image;
+        uniform vec2 resolution;
+        uniform float p0;
+        uniform float p1;
+        uniform float p2;
+        
+        void main() {
+            vec2 uv = abs(vec2(0.0, 1.0) - gl_FragCoord.xy / resolution);
+            float size = p0;
+            float border = p1 * 0.1;
+            float dist = length(uv - vec2(0.5))*2.0; 
+            vec4 c = texture2D(image, uv);
+            vec4 col = vec4(c.xyz, c.w * smoothstep(size, size + 0.005 + border, 1.0 - dist));
+            gl_FragColor= vec4(col.xyz * mix(1.0, 1.0 - pow(dist, 2.0), p2) * col.w, col.w);
+
+        }
+    </script>
+
+    <script id="fs_erode" type="notjs">
+        precision mediump float;
+        uniform sampler2D image;
+        uniform vec2 resolution;
+        uniform float p0;
+        uniform float p1;
+        
+        void main() {
+            vec2 uv = abs(vec2(0.0, 1.0) - gl_FragCoord.xy / resolution);
+            float amount = p0;
+            vec4 c = texture2D(image, uv);
+            float y = 0.299 * c.x + 0.587 * c.y  + 0.114 * c.z;
+            float alpha = smoothstep(amount, min(1.0, amount + p1), c.w * y);
+            gl_FragColor= vec4(c.xyz * alpha, alpha);
+
+        }
+    </script>
+
+
+    <script id="fs_greenscreen" type="notjs">
+        // Adapted from https://www.shadertoy.com/view/XsfGzn
+        precision mediump float;
+        uniform sampler2D image;
+        uniform vec2 resolution;
+        uniform float p0;
+        uniform float p1;
+        
+        void main() {
+            vec2 uv = abs(vec2(0.0, 1.0) - gl_FragCoord.xy / resolution);
+            float amount = p0;
+            vec4 c = texture2D(image, uv);
+            float maxrb = max(c.x, c.z);
+            float green = clamp((c.y - maxrb) * 2.0, 0.0, 1.0);
+            c.g = min(c.g, maxrb * 0.95 );
+            c = length(c) * normalize(c);
+            float alpha = smoothstep(amount, min(1.0, amount + p1), c.w * (1.0-green));
+            gl_FragColor= vec4(c.xyz * alpha, alpha);
+
+        }
+    </script>
+
+
+    <script id="fs_extract_alpha" type="notjs">
+        precision mediump float;
+        uniform sampler2D image;
+        uniform vec2 resolution;
+        uniform float p0;
+        uniform float p1;
+        
+        void main() {
+            vec2 uv = abs(vec2(0.0, 1.0) - gl_FragCoord.xy / resolution);
+            vec3 key = texture2D(image, vec2(0.0)).xyz;
+            vec4 c = texture2D(image, uv);
+            float dist = length(c.xyz - key);
+            float alpha = smoothstep(p0, min(1.0, p0 + p1), dist);
+            gl_FragColor= vec4(c.xyz * alpha, alpha);
+        }
+    </script>
+    <script>
+        let save_image = false;
+        let hard_refresh = false;
+        const $ = el => document.querySelector(el);
+        const $$ = el => document.querySelectorAll(el);
+        const gl = $("#c").getContext("webgl");
+
+
+        const filters = [
+            { label: "Choose Filter...", shader: "fs_normal", params: [] },
+            { label: "Grayscale", shader: "fs_grayscale", params: [] },
+            { label: "Noise", shader: "fs_noise", params: ["X", "Y"] },
+            { label: "Pixelate", shader: "fs_pixelate", params: ["Size"] },
+            { label: "Circle Crop", shader: "fs_circlecrop", params: ["Size", "Border", "Vignette"] },
+            { label: "Erode", shader: "fs_erode", params: ["Amount", "Smoothness"] },
+            { label: "Green Screen", shader: "fs_greenscreen", params: ["Threshold", "Smoothness"] },
+            { label: "Extract Alpha", shader: "fs_extract_alpha", params: ["Threshold", "Smoothness"] },
+            { label: "Custom Filter!", shader: "custom", params: ["Fragment GLSL Shader"] },
+        ];
+
+        let programs = [];
+
+        filters.forEach((filter, i) => {
+            const op = document.createElement('option');
+            op.value = i;
+            op.innerText = filter.label;
+            $('#program').appendChild(op);
+            if (filter.shader != "custom") {
+                programs.push(twgl.createProgramInfo(gl, ["vs", filter.shader]));
+            } else {
+                programs.push(null);
+            }
+        });
+
+        let image = new Image();
+        image.onload = refresh;
+        image.src = 'test.png';
+
+        function allow_drop(ev) {
+            ev.preventDefault();
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            const reader = new FileReader();
+            let file = ev.dataTransfer.items[0].getAsFile();
+            reader.addEventListener("load", () => {
+                image.src = reader.result;
+                refresh(true);
+
+            }, false);
+            if (file) { // TODO: additional checks (mimetype, etc.)
+                reader.readAsDataURL(file);
+            }
+        }
+
+
+        const arrays = {
+            position: [-1, -1, 0, 1, -1, 0, -1, 1, 0, -1, 1, 0, 1, -1, 0, 1, 1, 0],
+        };
+        const bufferInfo = twgl.createBufferInfoFromArrays(gl, arrays);
+
+        function render() {
+            // TODO: handle hard_refresh (avoid resubmit texture if soft refresh)
+            gl.canvas.width = image.width;
+            gl.canvas.height = image.height;
+            const filter_idx = document.getElementById('program').value;
+            let program;
+            if (filters[filter_idx].shader == "custom") {
+                program = twgl.createProgramInfo(gl, ["vs", $("#custom_shader").value], (msg, line) => {
+                    let lines = msg.split("\n").filter(l => l.indexOf("^^^ ERROR:") !== -1);
+                    $("#debug").innerText = lines.join('\n');
+                });
+                if (program === null) {
+                    $("#custom_shader").classList.add('error');
+                } else {
+                    $("#custom_shader").classList.remove('error');
+                    $("#debug").innerText = "";
+                }
+            } else {
+                program = programs[parseInt(filter_idx)];
+            }
+
+            const texture = twgl.createTexture(gl, {
+                src: image.src, auto: true
+            }, () => {
+                twgl.resizeCanvasToDisplaySize(gl.canvas);
+                gl.viewport(0, 0, gl.canvas.width, gl.canvas.height);
+
+                const uniforms = {
+                    image: texture,
+                    resolution: [gl.canvas.width, gl.canvas.height],
+                    p0: $("#p0") ? $("#p0").value : 0,
+                    p1: $("#p1") ? $("#p1").value : 0,
+                    p2: $("#p2") ? $("#p2").value : 0,
+                    p3: $("#p3") ? $("#p3").value : 0,
+                    p4: $("#p4") ? $("#p4").value : 0,
+                };
+
+                gl.useProgram(program.program);
+                twgl.setBuffersAndAttributes(gl, program, bufferInfo);
+                twgl.setUniforms(program, uniforms);
+                twgl.drawBufferInfo(gl, bufferInfo);
+
+                if (save_image) {
+                    save_image = false;
+                    var el = document.createElement('a');
+                    el.setAttribute('download', 'image.png');
+                    gl.canvas.toBlob(blob => {
+                        el.href = URL.createObjectURL(blob);
+                        el.click();
+                    });
+                }
+            });
+        };
+
+        function refresh(hard) {
+            hard_refresh = hard;
+            requestAnimationFrame(render);
+        }
+        function save() {
+            save_image = true;
+            refresh(false);
+        }
+
+        function select_filter(i) {
+
+            $("#params").innerHTML = '';
+            filters[i].params.forEach((label, i) => {
+                const div = document.createElement("div");
+                div.innerHTML = `<span>${label}</span>`;
+                if (label == "Fragment GLSL Shader") {
+                    const param = document.createElement("textarea");
+                    param.value = $("#fs_custom").innerText;
+                    param.id = "custom_shader";
+                    param.autocorrect = 'off';
+                    param.autocomplete = 'off';
+                    param.spellcheck = false;
+                    param.addEventListener('keyup', () => refresh(false));
+                    div.appendChild(param);
+                    const debug = document.createElement("div");
+                    debug.id = 'debug';
+                    div.appendChild(debug);
+                } else {
+                    const param = document.createElement("input");
+                    param.id = "p" + i;
+                    param.type = "range";
+                    param.value = "0";
+                    param.max = "1";
+                    param.step = "0.01";
+                    param.addEventListener('input', () => refresh(false));
+                    div.appendChild(param);
+                }
+                $("#params").appendChild(div);
+            });
+
+            refresh(false);
+        }
+    </script>
+
+
+
+    <!-- google analytics -->
+
+    <script>
+        var _gaq = [['_setAccount', 'UA-5753152-1'], ['_trackPageview']];
+        (function (d, t) {
+            var g = d.createElement(t),
+                s = d.getElementsByTagName(t)[0];
+            g.src = '//www.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g, s);
+        }(document, 'script'));
+    </script>
+</body>
+
+</html>
