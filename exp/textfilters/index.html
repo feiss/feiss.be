@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Filters</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font: 14px sans-serif;
+            margin: 2rem;
+            min-height: calc(100vh - 4rem);
+        }
+
+        p {
+            margin-bottom: 1rem;
+        }
+
+        #textareas {
+            display: flex;
+            align-content: space-between;
+        }
+
+        .remove {
+            text-decoration: none;
+            padding-right: 8px;
+            font-size: 1.4rem;
+            vertical-align: middle;
+        }
+
+        a {
+            color: teal;
+        }
+
+        a:hover {
+            color: rgb(206, 87, 18);
+        }
+
+        #program>div {
+            line-height: 16px;
+        }
+
+        #textareas>div {
+            flex: auto;
+            display: inline-block;
+        }
+
+        textarea {
+            background-color: #eee;
+            border: none;
+            outline: none;
+            width: 100%;
+            height: calc(100vh - 400px);
+            min-height: 300px;
+            padding: 0.5rem;
+            display: block;
+            margin-bottom: 1rem;
+        }
+
+        #textareas>div:first-child {
+            margin-right: 30px;
+        }
+
+        @media (max-width: 500px) {
+            body {
+                margin: 1rem;
+
+            }
+
+            #textareas {
+                flex-direction: column;
+            }
+
+            #textareas>div:first-child {
+                margin-right: 0;
+            }
+
+            textarea {
+                height: calc(50vh - 150px)
+            }
+        }
+    </style>
+</head>
+
+<body ondrop="drop(event)" ondragover="allow_drop(event)">
+    <h2>Text Filters</h2>
+    <p>
+        Hi! I'm </I><a href="https://diegofg.com">Diego</a>. You can drag any text file from your computer to this page
+        (it
+        will not be sent to any server).
+        <br>&nbsp;
+    </p>
+    <p>
+        <select id="filter" onchange="add_filter(this.value)"></select>
+    </p>
+    <p id="program"></p>
+    <div id="textareas">
+        <div>
+            <textarea placeholder="input" id="input" onscroll="$('#output').scrollTop = this.scrollTop"
+                oninput="render()" autocorrect='off' autocomplete='off' spellcheck=false></textarea>
+        </div>
+        <div>
+            <textarea placeholder="output" id="output" onscroll="$('#input').scrollTop = this.scrollTop"
+                autocorrect='off' autocomplete='off' spellcheck=false></textarea>
+
+            <button onclick="copy()">Copy to Clipboard</button>
+            <button onclick="save()">Save File...</button>
+        </div>
+    </div>
+
+
+    <script>
+
+        const $ = el => document.querySelector(el);
+        const $$ = el => document.querySelectorAll(el);
+
+        let program = [];
+
+        function allow_drop(ev) {
+            ev.preventDefault();
+        }
+
+        function drop(ev) {
+            ev.preventDefault();
+            console.log('hola')
+            const reader = new FileReader();
+            let file = ev.dataTransfer.items[0].getAsFile();
+            reader.addEventListener("load", () => {
+                $('#input').value = reader.result;
+                render();
+            }, false);
+            if (file) { // TODO: additional checks (mimetype, etc.)
+                reader.readAsText(file);
+            }
+        }
+        function copy() {
+            $('#output').select();
+            document.execCommand("copy");
+        }
+
+        function add_filter(filter) {
+            filter = parseInt(filter);
+            const div = document.createElement('div');
+            const id = "filter" + program.length;
+            const but = `<a href="#" class="remove" onclick="remove_filter(this.parentNode, '${id}')">&times;</a>`
+            div.innerHTML = but + filters[filter].label;
+            div.id = id;
+            $('#program').appendChild(div);
+            program.push(filter);
+            render();
+
+            $('#filter').value = '0';
+
+        }
+
+        function remove_filter(el, filter) {
+            const list = $('#program').children;
+            let i;
+            for (i = 0; i < list.length; i++) {
+                if (filter === list[i].id) {
+                    program.splice(i, 1);
+                    $('#program').removeChild(el);
+                    render();
+                    break;
+                }
+            }
+        }
+
+        function render() {
+            result = $('#input').value;
+            program.forEach((p, i) => {
+                const filter = filters[p];
+                result = filter.func(result);
+            })
+            $('#output').value = result;
+        }
+
+        function save() {
+            var el = document.createElement('a');
+            el.setAttribute('download', 'text.txt');
+            el.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent($('#output').value);
+            el.style.display = 'none';
+            document.body.appendChild(el);
+            el.click();
+            document.body.removeChild(el);
+        }
+
+        const filters = [
+            { label: "Add Filter...", func: f_copy, params: [] },
+            { label: "Remove empty lines", func: f_clean, params: [] },
+            { label: "Trim lines", func: f_trim, params: [] },
+            { label: "Sort lines (ascending)", func: f_sort_asc, params: [] },
+            { label: "Sort lines (descending)", func: f_sort_desc, params: [] },
+        ];
+
+        filters.forEach((filter, i) => {
+            const op = document.createElement('option');
+            op.value = i;
+            op.innerText = filter.label;
+            $('#filter').appendChild(op);
+        });
+
+        /// Functions
+
+        function f_copy(input) {
+            return input;
+        }
+
+
+        function f_clean(input) {
+            let lines = input.split("\n");
+            return lines.filter(line => line.length > 0).join("\n");
+        }
+
+        function f_trim(input) {
+            let lines = input.split("\n");
+            for (let i = 0; i < lines.length; i++) {
+                lines[i] = lines[i].trim();
+            }
+            return lines.join("\n");
+        }
+
+        function f_sort_asc(input) {
+            let lines = input.split("\n");
+            lines.sort();
+            return lines.join("\n");
+        }
+
+        function f_sort_desc(input) {
+            let lines = input.split("\n");
+            lines.sort((a, b) => {
+                return a > b ? -1 : (a == b ? 0 : 1);
+            });
+            return lines.join("\n");
+        }
+
+    </script>
+
+    <!-- google analytics -->
+
+    <script>
+        var _gaq = [['_setAccount', 'UA-5753152-1'], ['_trackPageview']];
+        (function (d, t) {
+            var g = d.createElement(t),
+                s = d.getElementsByTagName(t)[0];
+            g.src = '//www.google-analytics.com/ga.js';
+            s.parentNode.insertBefore(g, s);
+        }(document, 'script'));
+    </script>
+</body>
+
+</html>
