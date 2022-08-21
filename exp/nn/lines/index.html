@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>nn/lines</title>
+    <style>
+        body {
+            font: 14px sans-serif;
+            margin: 2rem;
+        }
+
+        canvas {
+            border: 1px solid #aaa;
+            margin-right: 0.5rem;
+            background-color: #eee;
+        }
+
+        #output {
+            font-size: 16px;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <p>&nbsp;</p>
+    <h3>Training Data:</h3>
+    <div id="training">Training, please wait...</div>
+    <br>
+    <h3>Draw a line:</h3>
+    <canvas id="input" width="200" height="200"></canvas>
+    <div id="output"></div>
+    <div id="nn"></div>
+    <script src="//unpkg.com/brain.js"></script>
+
+    <script>
+        $ = el => document.getElementById(el);
+
+        let drawing = false;
+        let input_ctx = $('input').getContext('2d');
+
+        $('input').addEventListener('mousedown', event => {
+            drawing = true;
+            input_ctx.lineWidth = 10;
+            input_ctx.fillStyle = '#eee';
+            input_ctx.fillRect(0, 0, $('input').width, $('input').height);
+            input_ctx.strokeStyle = '#000';
+            input_ctx.lineCap = 'round';
+            input_ctx.beginPath();
+            input_ctx.moveTo(event.offsetX, event.offsetY)
+        });
+        document.addEventListener('mouseup', event => {
+            drawing = false;
+            input_ctx.stroke();
+            think();
+        });
+        $('input').addEventListener('mousemove', event => {
+            if (drawing) {
+                input_ctx.lineTo(event.offsetX, event.offsetY)
+                input_ctx.stroke();
+                input_ctx.beginPath();
+                input_ctx.moveTo(event.offsetX, event.offsetY)
+            }
+        });
+
+        const W = 10;
+        let train_iterations = 200;
+
+        function encode_canvas(canvas) {
+            const c = canvas.getContext('2d');
+            const pixels = c.getImageData(0, 0, canvas.width, canvas.height).data;
+            let data = [];
+            for (let i = 0; i < pixels.length; i += 4) {
+                data.push((pixels[i + 0] + pixels[i + 1] + pixels[i + 2]) / 3 > 128 ? 1 : 0);
+            }
+            return data;
+        }
+
+        function generate_training_item() {
+            let horizontal = Math.random() < 0.5;
+            const canvas = document.createElement('canvas');
+            canvas.width = W;
+            canvas.height = W;
+            let c = canvas.getContext('2d');
+            c.fillStyle = '#fff';
+            c.strokeStyle = '#000';
+            c.fillRect(0, 0, W, W);
+            c.beginPath();
+            if (horizontal) {
+                c.moveTo(Math.random() * 0.5 * W, (0.25 + Math.random() * 0.5) * W);
+                c.lineTo((0.5 + Math.random() * 0.5) * W, (0.25 + Math.random() * 0.5) * W);
+            } else {
+                c.moveTo((0.25 + Math.random() * 0.5) * W, Math.random() * 0.5 * W);
+                c.lineTo((0.25 + Math.random() * 0.5) * W, (0.5 + Math.random() * 0.5) * W);
+            }
+            c.stroke();
+            $('training').append(horizontal ? "h" : "v");
+            $('training').appendChild(canvas);
+            canvas.style.width = '20px';
+            canvas.style.height = '20px';
+            return { input: encode_canvas(canvas), output: horizontal ? [0] : [1] };
+        }
+
+        $('training').innerHTML = '';
+        var t0 = performance.now();
+
+        let training_data = [];
+        while (train_iterations--) {
+            training_data.push(generate_training_item());
+        }
+
+        const net = new brain.NeuralNetwork({
+            inputSize: W * W,
+            outputSize: 1,
+            hiddenLayers: [5, 3],
+        });
+        net.train(training_data);
+
+        $('training').append(` (${Math.floor((performance.now() - t0) / 1000)} s)`);
+
+        function think() {
+            let can = $('input');
+            const canvas = document.createElement('canvas');
+            canvas.width = W;
+            canvas.height = W;
+            const c = canvas.getContext('2d');
+            c.drawImage(can, 0, 0, W, W);
+            const data = encode_canvas(canvas);
+            const res = net.run(data)[0];
+            const confidence = res < 0.5 ? 1.0 - res / 0.5 : (res - 0.5) / 0.5;
+            $('output').innerHTML = `<b>${res < 0.5 ? 'Horizontal' : 'Vertical'}</b>`;
+            $('output').innerHTML += ` (${Math.floor(confidence * 100)}% confidence)`;
+
+        }
+        //$('nn').innerHTML = brain.utilities.toSVG(net, { width: 200, height: 100 });
+    </script>
+</body>
+
+</html>
