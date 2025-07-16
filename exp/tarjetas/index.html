@@ -63,6 +63,14 @@
 
         .delete a {
             text-decoration: none;
+            font-size: 14px;
+            color: #8a2b35;
+        }
+
+        @media only screen and (max-width: 600px) {
+            #all {
+                width: 95%;
+            }
         }
 
         @media print {
@@ -154,7 +162,7 @@
                 <input type="text" class="medidas" placeholder="Medidas y técnica" oninput="save()">
                 <input type="text" class="precio" placeholder="Precio" oninput="save()">
                 <div style="text-align: right;" class="delete">
-                    <a href='javascript:;' onclick="remove(this.parentNode.parentNode)">Eliminar</a>
+                    <a href='javascript:;' onclick="remove(this.parentNode.parentNode)">Eliminar obra</a>
                 </div>
             </div>
         </template>
