@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Crimson+Text:ital,wght@0,400;0,600;0,700;1,400;1,600;1,700&display=swap"
+        rel="stylesheet">
+    <title>Tarjetas</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        #all {
+            width: 500px;
+            margin: 10px auto;
+        }
+
+        h1 {
+            font-size: 25px
+        }
+
+        body {
+            font-size: 16px;
+            font-family: sans-serif;
+            background-color: #ddd;
+        }
+
+        button {
+            margin: 10px 0;
+            background: #a6cbdb;
+            padding: 5px 10px;
+            border: 1px solid black;
+            border-radius: 3px;
+        }
+
+        input {
+            display: block;
+            width: 100%;
+            margin: 3px;
+            padding: 5px;
+            border-radius: 3px;
+            border: 1px solid black;
+            outline: none;
+        }
+
+        .right {
+            float: right;
+        }
+
+        #autor,
+        .obra {
+            margin: 2rem 0;
+        }
+
+        .obra .autor {
+            display: none;
+        }
+
+        .delete a {
+            text-decoration: none;
+        }
+
+        @media print {
+            body {
+                background-color: white;
+            }
+
+            #config {
+                display: none !important;
+            }
+
+            #all {
+                width: 100%;
+            }
+
+            #obras {
+                background: none;
+            }
+
+            .obra {
+                display: inline-block;
+                padding-top: 44px;
+                width: 330px;
+                max-width: 330px;
+                min-width: 330px;
+                height: 210px;
+                max-height: 210px;
+                min-height: 210px;
+                border: 1px dashed #ccc;
+                background: none;
+                margin: 0 !important;
+            }
+
+            .obra .autor {
+                display: block;
+            }
+
+            input {
+                border: none;
+                font-family: "Crimson Text", serif;
+                font-size: 1.1rem;
+                background: none;
+                text-align: center;
+                flex: 0 0 auto;
+                margin: 4px;
+                padding: 0;
+            }
+
+            input::placeholder {
+                opacity: 0;
+            }
+
+            .titulo {
+                font-size: 1.2rem;
+                font-weight: bold;
+                margin-bottom: 15px;
+            }
+
+            .precio {
+                font-size: 1.2rem;
+
+            }
+
+            button,
+            .delete,
+            .delete * {
+                display: none !important;
+            }
+        }
+    </style>
+</head>
+
+<body onload="init()">
+
+    <div id="all">
+        <div id="config">
+            <h1>Tarjetas Exposición</h1>
+
+            <input type="text" id="autor" placeholder="Nombre artista" oninput="save()">
+
+            <button onclick="add()">+ Añadir obra</button>
+            <button class="right" onclick="render(); print();">Crear tarjetas</button>
+        </div>
+        <div id="obras"></div>
+        <template id="template_obra">
+            <div class="obra">
+                <input type="text" class="titulo" placeholder="Título obra" oninput="save()">
+                <input type="text" class="autor">
+                <input type="text" class="medidas" placeholder="Medidas y técnica" oninput="save()">
+                <input type="text" class="precio" placeholder="Precio" oninput="save()">
+                <div style="text-align: right;" class="delete">
+                    <a href='javascript:;' onclick="remove(this.parentNode.parentNode)">Eliminar</a>
+                </div>
+            </div>
+        </template>
+    </div>
+
+    <div id="render"></div>
+</body>
+
+<script>
+
+    function init() {
+
+        load();
+    };
+
+
+
+    function load() {
+        const data = localStorage.getItem('data');
+        if (data) {
+            const obj = JSON.parse(data);
+            for (let i = 0; i < obj.length; i++) {
+                add(obj[i]);
+            }
+        }
+        const autor = localStorage.getItem('autor');
+        if (autor) document.getElementById('autor').value = autor;
+    }
+
+    function save() {
+        const obras = document.querySelectorAll('.obra');
+        let obj = [];
+        for (let i = 0; i < obras.length; i++) {
+            const inputs = obras[i].querySelectorAll('input');
+            let obra = {};
+            for (let j = 0; j < inputs.length; j++) {
+                obra[inputs[j].className] = inputs[j].value;
+            }
+            obj.push(obra);
+        }
+
+        localStorage.setItem('data', JSON.stringify(obj));
+        localStorage.setItem('autor', document.getElementById('autor').value.trim());
+    }
+
+
+    function add(data) {
+        if (data !== null) {
+            render();
+        }
+        const template = document.getElementById('template_obra');
+        const obra = template.content.cloneNode(true);
+        if (data !== null) {
+            for (const key in data) {
+                const input = obra.querySelector('.' + key);
+                if (input) input.value = data[key];
+            }
+        }
+        document.getElementById('obras').appendChild(obra);
+    }
+
+    function remove(el) {
+        el.parentNode.removeChild(el);
+        save();
+    }
+
+    function render() {
+        let items = document.querySelectorAll('.precio');
+        for (let i = 0; i < items.length; i++) {
+            let val = items[i].value.trim();
+            if (val) {
+                if (val.indexOf('€') == -1) val = val + '€';
+            }
+            else { val = ' '; }
+            items[i].value = val;
+        }
+
+        items = document.querySelectorAll('.autor');
+        for (let i = 0; i < items.length; i++) {
+            let val = document.getElementById('autor').value.trim();
+            items[i].value = val;
+        }
+    }
+</script>
+
+</html>
