@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="en-US">
+
+<head>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+
+
+  <meta charset="UTF-8">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#157878">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="stylesheet" href="gopro.github.io_files/style.css">
+  <link rel="shortcut icon" type="image/png" href="https://gopro.github.io/labs/assets/images/favicon.png">
+  <style>
+    :is([id*='google_ads_iframe'], [id*='taboola-'], .taboolaHeight, .taboola-placeholder, #top-ad, #credential_picker_container, #credentials-picker-container, #credential_picker_iframe, [id*='google-one-tap-iframe'], #google-one-tap-popup-container, .google-one-tap__module, .google-one-tap-modal-div, #amp_floatingAdDiv, #ez-content-blocker-container) {
+      display: none !important;
+      min-height: 0 !important;
+      height: 0 !important;
+    }
+  </style>
+</head>
+
+<body>
+  <a id="skip-to-content" href="#content">Skip to the content.</a>
+
+  <main id="content" class="main-content" role="main">
+
+    <script src="gopro.github.io_files/jquery.min.js"></script>
+
+    <script src="gopro.github.io_files/qrcodeborder.js"></script>
+
+    <script src="gopro.github.io_files/html2canvas.min.js"></script>
+
+    <style>
+      #qrcode {
+        width: 100%;
+      }
+
+      div {
+        width: 100%;
+        display: inline-block;
+      }
+    </style>
+
+
+    <h2 id="time-lapse-settings">Time-lapse Settings</h2>
+
+    <p><b>Type:</b>&nbsp;&nbsp;
+      <input type="radio" id="nltlv1" name="nltlv" value="mT" checked="checked"> <label for="nltlv1">TimeLapse
+        Video</label>&nbsp;&nbsp;
+      <input type="radio" id="nltlv2" name="nltlv" value="mNL"> <label for="nltlv2">NightLapse Video</label>&nbsp;&nbsp;
+      <input type="radio" id="nltlv3" name="nltlv" value=""> <label for="nltlv3">not set</label>
+    </p>
+
+    <p><b>Lens:</b>&nbsp;&nbsp;
+      <input type="radio" id="tlvf1" name="tlvf" value="fW"> <label for="tlvf1">Wide </label>&nbsp;&nbsp;
+      <input type="radio" id="tlvf2" name="tlvf" value="fL"> <label for="tlvf2">Linear </label>&nbsp;&nbsp;
+      <input type="radio" id="tlvf3" name="tlvf" value="" checked="checked"> <label for="tlvf3">not set</label>
+    </p>
+
+    <p><b>Interval:</b>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse0" name="fpslapse" value="p.1"> <label for="fpslapse0">1s </label>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse1" name="fpslapse" value="p.2"> <label for="fpslapse1">2s </label>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse2" name="fpslapse" value="p.5" checked="checked"> <label for="fpslapse2">5s
+      </label>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse3" name="fpslapse" value="p.10"> <label for="fpslapse3">10s </label>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse4" name="fpslapse" value="p.30"> <label for="fpslapse4">30s </label>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse5" name="fpslapse" value="p.60"> <label for="fpslapse5">60s </label>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse6" name="fpslapse" value="p.120"> <label for="fpslapse6">2min </label>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse7" name="fpslapse" value="p.300"> <label for="fpslapse7">5min </label>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse8" name="fpslapse" value="p.1800"> <label for="fpslapse8">30min
+      </label>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse9" name="fpslapse" value="p.3600"> <label for="fpslapse9">60min
+      </label>&nbsp;&nbsp;
+      <input type="radio" id="fpslapse9" name="fpslapse" value=""> <label for="fpslapse10">not set </label>
+    </p>
+
+    <h2 id="time-lapse-capture-time">Time-lapse Capture Time</h2>
+
+    <p>Start Time: <input type="range" style="width: 100%;" id="tlstrt" name="tlstrt" min="400" max="1440"
+        value="62"><label for="tlstrt"></label> <b id="starttext">10:20</b></p>
+
+    <p>Capture Length: <input type="range" style="width: 100%;" id="tlend" name="tlend" min="1" max="1420"
+        value="292"><label for="tlend"></label> <b id="lentext">60</b> minutes &nbsp;&nbsp; End Time: <b
+        id="endtext">11:20</b></p>
+
+    <p><input type="checkbox" id="upld" name="upld">
+      <label for="upld">Upload at the end of each capture</label><br>
+    </p>
+
+    <p>Daily playback length (at 30fps): <b id="length">24</b> seconds</p>
+
+    <div id="qrcode_txt" style="width: 360px">
+      <center>
+        <div id="qrcode" title=""><canvas width="360" height="360" style="display: none;"></canvas><img
+            style="display: block;">
+        </div><br>
+        <b>
+          <font color="#009FDF">GoProQR:</font>
+        </b> <em id="qrtext">!10:20NmTp.5!S!3600E!1R</em><br>
+        <b>
+          <font color="#005CAC">Daily Timelapse and Upload</font>
+        </b>
+      </center>
+    </div>
+    <p><button id="copyImg">Copy Image to Clipboard</button>
+      <br>
+      <br>
+      Share this QR Code as a URL:<br>
+    <p>
+      <small
+        id="urltext">https://gopro.github.io/labs/control/set/?cmd=!10:20NmTp.5!S!3600E!1R&amp;title=Daily%20Timelapse%20and%20Upload</small>
+    </p>
+    <button id="copyBtn">Copy URL to Clipboard</button>
+    </p>
+
+    <h2 id="solutions-for-extra-long-captures">Solutions for extra long captures</h2>
+
+    <p>A/C powering the camera via USB is the best. With continuous power
+      supplied, remove the internal battery (charging can reset the wake
+      timer), and the camera should run for a very long time (only SD card
+      storage limitations.) You might be tempted to use a Lithium Ion USB
+      powerbank, however they typically do not work well. They are designed to
+      quickly recharge a smartphone, and when they think power is no longer
+      needed, they shut-off. A select few USB battery sources include an
+      “always on feature” designed for time-lapse projects. Example:<a
+        href="https://voltaicsystems.com/v50/">voltaicsystems.com/v50</a>
+      This one can even solar recharge the battery at the same time. The
+      second option is add a USB keep alive device that prevents your USB
+      power bank from shutting down. Examples: from <a
+        href="https://www.sotabeams.co.uk/usb-battery-pack-keep-alive-load/">sotabeams.co.uk</a> and from <a
+        href="https://www.tindie.com/products/overz/smart-power-bank-keep-alive/">tindie.com</a></p>
+
+    <p><strong>Compatibility:</strong> Labs enabled HERO8-13 and BONES</p>
+
+    <p>updated: Sept 10, 2024</p>
+
+    <p><a href="https://gopro.github.io/labs/control/">More features</a> for Labs enabled cameras</p>
+
+    <script>
+      var once = true;
+      var qrcode;
+      var cmd = "mPdP!60SQ!1R";
+      var clipcopy = "";
+      var lasttimecmd = "";
+      var changed = false;
+
+      function makeQR() {
+        if (once === true) {
+          qrcode = new QRCode(document.getElementById("qrcode"),
+            {
+              text: "!oMBURN=\"\"",
+              width: 360,
+              height: 360,
+              correctLevel: QRCode.CorrectLevel.M
+            });
+          once = false;
+        }
+      }
+
+      function checkTime(i) {
+        if (i < 10) { i = "0" + i; }  // add zero in front of numbers < 10
+        return i;
+      }
+
+      function pad(num, size) {
+        var s = num + "";
+        while (s.length < size) s = "0" + s;
+        return s;
+      }
+
+
+      function dcmd(cmd, id) {
+        var x;
+        if (document.getElementById(id) !== null) {
+          x = document.getElementById(id).checked;
+          if (x === true)
+            cmd = cmd + document.getElementById(id).value;
+        }
+        else {
+          for (i = 1; i < 15; i++) {
+            var newid = id + i;
+            if (document.getElementById(newid) !== null) {
+              x = document.getElementById(newid).checked;
+              if (x === true)
+                cmd = cmd + document.getElementById(newid).value;
+            }
+          }
+        }
+        return cmd;
+      }
+
+
+      function dval(id) {
+        var x;
+        var val = "";
+        {
+          for (i = 1; i < 15; i++) {
+            var newid = id + i;
+            if (document.getElementById(newid) !== null) {
+              x = document.getElementById(newid).checked;
+              if (x === true)
+                val = document.getElementById(newid).value;
+            }
+          }
+        }
+        return val;
+      }
+
+
+
+
+      function timeLoop() {
+        if (document.getElementById("tlstrt") !== null) {
+          var start = parseInt(document.getElementById("tlstrt").value);
+          var startmins = start;
+          var caplen = parseInt(document.getElementById("tlend").value);
+          caplen = Math.trunc(caplen * caplen / 1420);
+          if (caplen < 1) caplen = 1;
+          var endmins = startmins + caplen;
+          if (endmins >= 1440)
+            endmins -= 1440;
+
+          var starthourstime = Math.trunc(startmins / 60);
+          var startminstime = startmins - starthourstime * 60;
+
+          var endhourstime = Math.trunc(endmins / 60);
+          var endminstime = endmins - endhourstime * 60;
+
+          var stxt = pad(starthourstime, 2) + ":" + pad(startminstime, 2);
+          var etxt = pad(endhourstime, 2) + ":" + pad(endminstime, 2);
+
+          document.getElementById("starttext").innerHTML = stxt;
+          document.getElementById("endtext").innerHTML = etxt;
+          document.getElementById("lentext").innerHTML = caplen;
+
+          var spftxt = dval("fpslapse");
+          var spf = spftxt.slice(2);
+          var fsecs = ((caplen * 60) / parseInt(spf)) / 30;
+          var secs10 = fsecs * 10;
+          var secs = Math.trunc(secs10) / 10;
+
+          if (spf == "")
+            document.getElementById("length").innerHTML = "unknown";
+          else
+            document.getElementById("length").innerHTML = secs;
+
+
+
+          cmd = "";
+          cmd = dcmd(cmd, "nltlv");
+          cmd = dcmd(cmd, "tlvf");
+          cmd = dcmd(cmd, "fpslapse");
+
+          cmd = "!" + stxt + "N" + cmd + "!S!" + caplen * 60 + "E";
+
+          if (document.getElementById("upld") !== null) {
+            if (document.getElementById("upld").checked === true) {
+              cmd = cmd + "!U";
+            }
+          }
+          cmd = cmd + "!1R";
+        }
+
+        qrcode.clear();
+        qrcode.makeCode(cmd);
+
+
+        if (cmd != lasttimecmd) {
+          changed = true;
+          lasttimecmd = cmd;
+        }
+
+        if (changed === true) {
+          document.getElementById("qrtext").innerHTML = cmd;
+          clipcopy = "https://gopro.github.io/labs/control/set/?cmd=" + cmd;
+          document.getElementById("urltext").innerHTML = clipcopy;
+          changed = false;
+        }
+
+        var t = setTimeout(timeLoop, 100);
+      }
+
+      function myReloadFunction() {
+        location.reload();
+      }
+
+
+      async function copyImageToClipboard() {
+        html2canvas(document.querySelector("#qrcode_txt")).then(canvas => canvas.toBlob(blob => navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })])));
+      }
+      async function copyTextToClipboard(text) {
+        try {
+          await navigator.clipboard.writeText(text);
+        } catch (err) {
+          alert('Error in copying text: ', err);
+        }
+      }
+
+      function setupButtons() {
+        document.getElementById("copyBtn").onclick = function () {
+          copyTextToClipboard(clipcopy);
+        };
+        document.getElementById("copyImg").onclick = function () {
+          copyImageToClipboard();
+        };
+      }
+
+      makeQR();
+      setupButtons();
+      timeLoop();
+
+    </script>
+
+
+
+  </main>
+
+
+</body>
+
+</html>
