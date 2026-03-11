@@ -253,9 +253,7 @@
           cmd = dcmd(cmd, "tlvf");
           cmd = dcmd(cmd, "fpslapse");
 
-          // !2NoW0!09:48NmTp.5!S!29520E
-          
-          cmd = "!2NoW0!" + stxt + "N" + cmd + "!S!" + caplen * 60 + "E";
+          cmd = "!" + stxt + "N" + cmd + "!S!" + caplen * 60 + "E";
 
           if (document.getElementById("upld") !== null) {
             if (document.getElementById("upld").checked === true) {
@@ -324,6 +322,7 @@
 </body>
 
 </html>
+
 
 
 
