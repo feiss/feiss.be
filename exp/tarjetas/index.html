@@ -38,6 +38,16 @@
             border-radius: 3px;
         }
 
+        button:hover {
+            background: #7bc6e6;
+            cursor: pointer;
+        }
+
+        .obra button {
+            padding: 2px 5px;
+            margin: 3px 3px;
+        }
+
         input {
             display: block;
             width: 100%;
@@ -50,6 +60,7 @@
 
         .right {
             float: right;
+            margin-left: 0.5rem;
         }
 
         #autor,
@@ -58,7 +69,8 @@
         }
 
         .obra .autor {
-            display: none;
+            visibility: hidden;
+            position: absolute;
         }
 
         .delete a {
@@ -66,6 +78,68 @@
             font-size: 14px;
             color: #8a2b35;
         }
+
+        .delete a:hover {
+            color: #de4756;
+        }
+
+
+        #certificado {
+            padding: 3rem;
+            background: white;
+            font: 1.2rem "Crimson Text", serif;
+            width: 700px;
+            border: 8px double black;
+        }
+
+        #certificado p {
+            margin: 3.5rem 0;
+        }
+
+        #certificado img {
+            float: left;
+            border: 1px solid gray;
+            max-width: 50%;
+            max-height: 350px;
+            margin-right: 2rem;
+            flex: 0 0 auto;
+            padding: 10px;
+        }
+
+        #certificado h1 {
+            font-weight: bold;
+            font-size: 48px;
+            text-align: center;
+        }
+
+        #certificado input {
+            display: inline;
+            font: 1rem serif;
+            width: auto;
+            padding: 0;
+            border: none;
+            font: 1.3rem serif;
+            font-weight: bold;
+            background-color: #e7e7e7;
+
+        }
+
+        #certificado .cert_line {
+            flex: 1 0 auto;
+            display: flex;
+            align-items: baseline;
+            margin-bottom: 3px;
+        }
+
+        #certificado .cert_line span {
+            flex: 0 0 auto;
+        }
+
+        #certificado .cert_line input {
+            flex: 1 0 auto;
+            text-align: left;
+        }
+
 
         @media only screen and (max-width: 600px) {
             #all {
@@ -99,13 +173,19 @@
                 height: 210px;
                 max-height: 210px;
                 min-height: 210px;
-                border: 1px dashed #ccc;
+                border: 1px dashed #e0e0e0;
                 background: none;
                 margin: 0 !important;
             }
 
             .obra .autor {
-                display: block;
+
+                visibility: visible;
+                position: relative;
+            }
+
+            input[type=file] {
+                display: none;
             }
 
             input {
@@ -139,6 +219,24 @@
             .delete * {
                 display: none !important;
             }
+
+            #certificado {
+                width: auto;
+                position: absolute;
+                top: 0;
+                bottom: 0;
+            }
+
+            #certificado input {
+                display: inline;
+                border: none;
+                font-weight: bold;
+                width: auto;
+                background-color: transparent;
+                text-align: left;
+                font-size: 1.3rem;
+            }
+
         }
     </style>
 </head>
@@ -151,48 +249,125 @@
 
             <input type="text" id="autor" placeholder="Nombre artista" oninput="save()">
 
-            <button onclick="add()">+ Añadir obra</button>
-            <button class="right" onclick="render(); print();">Crear tarjetas</button>
+            <button onclick="add_obra()">+ Añadir obra</button>
+            <button class="right" onclick="render(); print_tarjetas();"><b>Imprimir tarjetas</b></button>
+            <button class="right" onclick="render(); export_json();">Exportar</button>
         </div>
         <div id="obras"></div>
         <template id="template_obra">
             <div class="obra">
+                <div style="text-align: right;" class="delete">
+                    <a href='javascript:;' onclick="remove(this.parentNode.parentNode)">Eliminar obra</a>
+                </div>
                 <input type="text" class="titulo" placeholder="Título obra" oninput="save()">
                 <input type="text" class="autor">
                 <input type="text" class="medidas" placeholder="Medidas y técnica" oninput="save()">
                 <input type="text" class="precio" placeholder="Precio" oninput="save()">
-                <div style="text-align: right;" class="delete">
-                    <a href='javascript:;' onclick="remove(this.parentNode.parentNode)">Eliminar obra</a>
-                </div>
+                <button onclick="copiar_a_certificado(this.parentNode);">Copiar a Certificado</button>
             </div>
         </template>
     </div>
 
-    <div id="render"></div>
+    <div id="certificado">
+        <button onclick="print_certificado()">Imprimir</button>
+
+        <h1>Certificado de Autenticidad</h1>
+
+        <p>Yo, <b><input id="cert_autor1"></b>, con DNI <b><input value="" size="8"></b>,
+            certifico
+            que la
+            obra que se
+            detalla a
+            continuación es una
+            creación original de mi autoría:</p>
+
+        <div style="display: flex;">
+            <img id="cert_imagen" src="" alt="(Arrastra imagen)" ondragover="handleDragOver(event)"
+                ondrop="handleDrop(event)">
+
+
+            <div>
+                <span class="cert_line">
+                    <span>Título de la obra:</span> <input id="cert_titulo" value="">
+                </span>
+                <span class="cert_line">
+                    <span>Artista:</span> <input id="cert_autor2" value="">
+                </span>
+                <span class="cert_line">
+                    <span>Técnica:</span> <input id="cert_tecnica" value="">
+                </span>
+                <span class="cert_line">
+                    <span>Dimensiones:</span> <input id="cert_medidas" value="">
+                </span>
+                <span class="cert_line">
+                    <span>Año de finalización:</span> <input id="cert_ano" value="2026">
+                </span>
+            </div>
+        </div>
+
+        <p>El artista conserva todos los derechos de reproducción, publicación y distribución de la obra. La compra de
+            la obra no otorga al comprador derechos para reproducirla, copiarla o utilizarla con fines comerciales sin
+            la autorización expresa y por escrito del artista.</p>
+
+        <p style="text-align: right;">En Ames, <span id="cert_dia"></span></p>
+        <p>&nbsp;</p>
+        <p style="text-align: right;">Contacto: <input size="30" style="font-weight:normal !important"></p>
+    </div>
+
+
 </body>
 
 <script>
 
     function init() {
-
         load();
     };
 
+    function handleDragOver(event) {
+        event.preventDefault();
+        event.dataTransfer.dropEffect = 'copy';
+    }
 
+    function handleDrop(event) {
+        event.preventDefault();
+        const files = event.dataTransfer.files;
+        if (!files || files.length === 0) return;
+        const file = files[0];
+        if (!file.type.startsWith('image/')) return;
+
+        const img = event.currentTarget;
+        const reader = new FileReader();
+        reader.onload = function (e) {
+            img.src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+
+    function print_tarjetas() {
+        document.getElementById('all').style.display = 'block';
+        document.getElementById('certificado').style.display = 'none';
+
+        print();
+        document.getElementById('certificado').style.display = 'block';
+    }
 
     function load() {
         const data = localStorage.getItem('data');
         if (data) {
-            const obj = JSON.parse(data);
-            for (let i = 0; i < obj.length; i++) {
-                add(obj[i]);
-            }
+            load_data(data);
         }
         const autor = localStorage.getItem('autor');
         if (autor) document.getElementById('autor').value = autor;
     }
 
-    function save() {
+    function load_data(data) {
+        const obj = JSON.parse(data);
+        for (let i = 0; i < obj.length; i++) {
+            add_obra(obj[i]);
+        }
+    }
+
+    function generate_data() {
         const obras = document.querySelectorAll('.obra');
         let obj = [];
         for (let i = 0; i < obras.length; i++) {
@@ -204,12 +379,32 @@
             obj.push(obra);
         }
 
+        return obj;
+    }
+
+    function save() {
+        let obj = generate_data();
         localStorage.setItem('data', JSON.stringify(obj));
         localStorage.setItem('autor', document.getElementById('autor').value.trim());
     }
 
+    function export_json() {
+        let obj = generate_data();
+        let json = JSON.stringify(obj, null, 2);
 
-    function add(data) {
+        const blob = new Blob([json], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'obras.json';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    }
+
+
+    function add_obra(data) {
         if (data !== null) {
             render();
         }
@@ -246,6 +441,53 @@
             items[i].value = val;
         }
     }
+
+
+    function copiar_a_certificado(el) {
+        render();
+        const cert = document.getElementById('certificado');
+
+        const titulo = cert.querySelector('#cert_titulo');
+        titulo.value = el.querySelector('.titulo').value;
+
+        const autor_value = document.getElementById('autor').value.trim();
+        const autor = cert.querySelector('#cert_autor1');
+        autor.value = autor_value;
+        autor.style.width = (autor_value.length * 10) + 'px';
+
+        cert.querySelector('#cert_autor2').value = autor_value;
+
+        const parts = el.querySelector('.medidas').value.split('cm');
+        const tecnica = cert.querySelector('#cert_tecnica');
+        tecnica.value = parts[1].substr(1).trim();
+        tecnica.value = tecnica.value[0].toUpperCase() + tecnica.value.substr(1);
+
+        const medidas = cert.querySelector('#cert_medidas');
+        medidas.value = parts[0] + 'cm';
+
+        cert.querySelector('#cert_dia').innerText = hoy();
+    }
+
+    function hoy() {
+        const hoy = new Date();
+        const dias = ['domingo', 'lunes', 'martes', 'miércoles', 'jueves', 'viernes', 'sábado'];
+        const meses = ['enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio', 'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'];
+        const diaSemana = dias[hoy.getDay()];
+        const dia = hoy.getDate();
+        const mes = meses[hoy.getMonth()];
+        const anio = hoy.getFullYear();
+        return `${diaSemana} ${dia} de ${mes} de ${anio}`;
+    }
+
+    function print_certificado() {
+        render();
+        document.getElementById('all').style.display = 'none';
+        const cert = document.getElementById('certificado');
+        cert.style.display = 'block';
+        print();
+        document.getElementById('all').style.display = 'block';
+    }
+
 </script>
 
 </html>
